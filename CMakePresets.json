@@ -1,0 +1,211 @@
+{
+    "version": 3,
+    "configurePresets":
+    [
+        {
+            "name": "common",
+            "description": "Common configurations for all Presets",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "installDir": "${sourceDir}/bin"
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+        },
+        {
+            "name": "release",
+            "hidden": true,
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+        },
+        {
+            "name": "linux",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/toolchain/linux.cmake",
+            "cacheVariables": { "TARGET_PLATFORM": "Linux" }
+        },
+        {
+            "name": "mingw",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/toolchain/mingw.cmake",
+            "cacheVariables": { "TARGET_PLATFORM": "Mingw" }
+        },
+        {
+            "name": "windows",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/toolchain/windows.cmake",
+            "cacheVariables": { "TARGET_PLATFORM": "Windows" }
+        },
+        {
+            "name": "imgui-sdl",
+            "hidden": true,
+            "cacheVariables": { "IMGUI_BACKEND": "SDL" }
+        },
+        {
+            "name": "imgui-glfw",
+            "hidden": true,
+            "cacheVariables": { "IMGUI_BACKEND": "GLFW" }
+        },
+        {
+            "name": "linux-debug-sdl",
+            "displayName": "linux-debug-sdl",
+            "description": "Native Linux Debug build (Imgui SDL)",
+            "inherits": ["common", "linux", "debug", "imgui-sdl"],
+            "binaryDir": "${sourceDir}/build/linux-debug/sdl",
+            "installDir": "${sourceDir}/bin/linux-debug/sdl"
+        },
+        {
+            "name": "linux-debug-glfw",
+            "displayName": "linux-debug-glfw",
+            "description": "Native Linux Debug build (Imgui GLFW)",
+            "inherits": ["common", "linux", "debug", "imgui-glfw"],
+            "binaryDir": "${sourceDir}/build/linux-debug/glfw",
+            "installDir": "${sourceDir}/bin/linux-debug/glfw"
+        },
+        {
+            "name": "linux-release-sdl",
+            "displayName": "linux-release-sdl",
+            "description": "Native Linux Release build (Imgui SDL)",
+            "inherits": ["common", "linux", "release", "imgui-sdl"],
+            "binaryDir": "${sourceDir}/build/linux-release/sdl",
+            "installDir": "${sourceDir}/bin/linux-release/sdl"
+        },
+        {
+            "name": "linux-release-glfw",
+            "displayName": "linux-release-glfw",
+            "description": "Native Linux Release build (Imgui GLFW)",
+            "inherits": ["common", "linux", "release", "imgui-glfw"],
+            "binaryDir": "${sourceDir}/build/linux-release/glfw",
+            "installDir": "${sourceDir}/bin/linux-release/glfw"
+        },
+        {
+            "name": "mingw-debug-sdl",
+            "displayName": "mingw-debug-sdl",
+            "description": "Windows Debug from Linux (Imgui SDL)",
+            "inherits": ["common", "mingw", "debug", "imgui-sdl"],
+            "binaryDir": "${sourceDir}/build/mingw-debug/sdl",
+            "installDir": "${sourceDir}/bin/mingw-debug/sdl"
+        },
+        {
+            "name": "mingw-debug-glfw",
+            "displayName": "mingw-debug-glfw",
+            "description": "Windows Debug build from Linux (Imgui GLFW)",
+            "inherits": ["common", "mingw", "debug", "imgui-glfw"],
+            "binaryDir": "${sourceDir}/build/mingw-debug/glfw",
+            "installDir": "${sourceDir}/bin/mingw-debug/glfw"
+        },
+        {
+            "name": "mingw-release-sdl",
+            "displayName": "mingw-release-sdl",
+            "description": "Windows Release build from Linux (Imgui SDL)",
+            "inherits": ["common", "mingw", "release", "imgui-sdl"],
+            "binaryDir": "${sourceDir}/build/mingw-release/sdl",
+            "installDir": "${sourceDir}/bin/mingw-release/sdl"
+        },
+        {
+            "name": "mingw-release-glfw",
+            "displayName": "mingw-release-glfw",
+            "description": "Windows Release build from Linux (Imgui GLFW)",
+            "inherits": ["common", "mingw", "release", "imgui-glfw"],
+            "binaryDir": "${sourceDir}/build/mingw-release/glfw",
+            "installDir": "${sourceDir}/bin/mingw-release/glfw"
+        },
+        {
+            "name": "windows-debug-sdl",
+            "displayName": "windows-debug-sdl",
+            "description": "Native Windows Debug build (Imgui SDL)",
+            "inherits": ["common", "windows", "debug", "imgui-sdl"],
+            "binaryDir": "${sourceDir}/build/windows-debug/sdl",
+            "installDir": "${sourceDir}/bin/windows-debug/sdl"
+        },
+        {
+            "name": "windows-debug-glfw",
+            "displayName": "windows-debug-glfw",
+            "description": "Native Windows Debug build (Imgui GLFW)",
+            "inherits": ["common", "windows", "debug", "imgui-glfw"],
+            "binaryDir": "${sourceDir}/build/windows-debug/glfw",
+            "installDir": "${sourceDir}/bin/windows-debug/glfw"
+        },
+        {
+            "name": "windows-release-sdl",
+            "displayName": "windows-release-sdl",
+            "description": "Native Windows Release build (Imgui SDL)",
+            "inherits": ["common", "windows", "release", "imgui-sdl"],
+            "binaryDir": "${sourceDir}/build/windows-release/sdl",
+            "installDir": "${sourceDir}/bin/windows-release/sdl"
+        },
+        {
+            "name": "windows-release-glfw",
+            "displayName": "windows-release-glfw",
+            "description": "Native Windows Release build (Imgui GLFW)",
+            "inherits": ["common", "windows", "release", "imgui-glfw"],
+            "binaryDir": "${sourceDir}/build/windows-release/glfw",
+            "installDir": "${sourceDir}/bin/windows-release/glfw"
+        }
+    ],
+    "buildPresets":
+    [
+        {
+            "name": "linux-debug-sdl",
+            "configurePreset": "linux-debug-sdl",
+            "description": "Native Linux Debug build (Imgui SDL)"
+        },
+        {
+            "name": "linux-debug-glfw",
+            "configurePreset": "linux-debug-glfw",
+            "description": "Native Linux Debug build (Imgui GLFW)"
+        },
+        {
+            "name": "linux-release-sdl",
+            "configurePreset": "linux-release-sdl",
+            "description": "Native Linux Release build (Imgui SDL)"
+        },
+        {
+            "name": "linux-release-glfw",
+            "configurePreset": "linux-release-glfw",
+            "description": "Native Linux Release build (Imgui GLFW)"
+        },
+        {
+            "name": "mingw-debug-sdl",
+            "configurePreset": "mingw-debug-sdl",
+            "description": "Build Windows Debug from Linux (Imgui SDL)"
+        },
+        {
+            "name": "mingw-debug-glfw",
+            "configurePreset": "mingw-debug-glfw",
+            "description": "Build Windows Debug from Linux (Imgui GLFW)"
+        },
+        {
+            "name": "mingw-release-sdl",
+            "configurePreset": "mingw-release-sdl",
+            "description": "Build Windows Release from Linux (Imgui SDL)"
+        },
+        {
+            "name": "mingw-release-glfw",
+            "configurePreset": "mingw-release-glfw",
+            "description": "Build Windows Debug from Linux (Imgui GLFW)"
+        },
+        {
+            "name": "windows-debug-sdl",
+            "configurePreset": "windows-debug-sdl",
+            "description": "Native Windows Debug build (Imgui SDL)"
+        },
+        {
+            "name": "windows-debug-glfw",
+            "configurePreset": "windows-debug-glfw",
+            "description": "Native Windows Debug build (Imgui GLFW)"
+        },
+        {
+            "name": "windows-release-sdl",
+            "configurePreset": "windows-release-sdl",
+            "description": "Native Windows Release build (Imgui SDL)"
+        },
+        {
+            "name": "windows-release-glfw",
+            "configurePreset": "windows-release-glfw",
+            "description": "Native Windows Debug build (Imgui GLFW)"
+        }
+    ]
+}
