@@ -19,7 +19,9 @@ set(DIR_DEPS_TOOL ${CMAKE_SOURCE_DIR}/deps/tools)
 
 if(IMGUI_BACKEND STREQUAL "GLFW")
     message(STATUS "Fetching GLFW...")
-    set(GLFW_LIBRARY_TYPE SHARED CACHE STRING "Build GLFW as shared lib" FORCE)
+    if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
+        set(GLFW_LIBRARY_TYPE SHARED CACHE STRING "GLFW as shared lib" FORCE)
+    endif()
     FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -55,7 +57,6 @@ FetchContent_Declare(
     GIT_TAG v1.92.5-docking
     SOURCE_DIR ${DIR_DEPS_LIB}/imgui
 )
-#FetchContent_MakeAvailable(imgui)
 
 FetchContent_GetProperties(imgui)
 if(NOT imgui_POPULATED)
