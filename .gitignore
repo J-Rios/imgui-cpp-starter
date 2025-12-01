@@ -6,3 +6,4 @@ build/
 deps/
 
 # Files to ignore
+imgui.ini

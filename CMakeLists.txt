@@ -24,9 +24,6 @@ set(DIR_LIB ${CMAKE_SOURCE_DIR}/lib)
 set(DIR_TOOL ${CMAKE_SOURCE_DIR}/tool)
 set(DIR_CMAKE_TOOLCHAIN ${CMAKE_SOURCE_DIR}/toolchain)
 
-# Check for mandatory required tools
-find_package(OpenGL REQUIRED)
-
 ###############################################################################
 
 ### Build Options ###
@@ -38,6 +35,16 @@ set_property(CACHE TARGET_PLATFORM PROPERTY STRINGS Linux Windows Mingw)
 # Dear Imgui Backend to use
 set(IMGUI_BACKEND "SDL" CACHE STRING "Backend for Dear ImGui")
 set_property(CACHE IMGUI_BACKEND PROPERTY STRINGS "SDL" "GLFW")
+
+###############################################################################
+
+### Check For Required Tools ###
+
+# Mandatory required tools
+find_package(OpenGL REQUIRED)
+if(TARGET_PLATFORM STREQUAL "Linux")
+    find_package(X11 REQUIRED)
+endif()
 
 ###############################################################################
 
@@ -75,13 +82,25 @@ endif()
 set(PROJECT_OUT ${PROJECT_NAME}_${VERSION})
 
 # Set build output directory
+set(DIR_OUT_BIN ${DIR_BIN})
 if(TARGET_PLATFORM STREQUAL "Linux")
-    set(DIR_OUT_BIN ${DIR_BIN}/linux/${PROJECT_OUT})
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}/linux)
 elseif(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
-    set(DIR_OUT_BIN ${DIR_BIN}/windows/${PROJECT_OUT})
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}/windows)
 else()
     message(STATUS FATAL_ERROR "Undefined Target Platform")
 endif()
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}/debug)
+else()
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}/release)
+endif()
+if(IMGUI_BACKEND STREQUAL "SDL")
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}/sdl)
+elseif(IMGUI_BACKEND STREQUAL "GLFW")
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}/glfw)
+endif()
+set(DIR_OUT_BIN ${DIR_OUT_BIN}/${PROJECT_OUT})
 
 ###############################################################################
 
@@ -153,9 +172,6 @@ include(CMakeDeps.cmake)
 
 ### Build Target ###
 
-# Add Compile Definitions
-add_compile_definitions(${COMPILE_DEFS})
-
 # Sources files
 set(SRC_FILES
     ${DIR_SRC}/main.cpp
@@ -171,6 +187,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${DIR_INC})
 add_subdirectory(src/imgui_demo)
 add_subdirectory(src/version)
 # ...
+
+# Add Compile Definitions
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPILE_DEFS})
 
 # Libraries for linkage (-lLIBRARY)
 target_link_libraries(${PROJECT_NAME}
