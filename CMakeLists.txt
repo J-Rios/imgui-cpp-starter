@@ -264,14 +264,22 @@ add_custom_command(
 # Add Windows DLL libraries to output directory
 # Note: If a library has not been built as shared library, this will fail
 if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
-    add_custom_command(
-        TARGET ${PROJECT_NAME}
-        POST_BUILD
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>"
-            "${DIR_OUT_BIN}/"
+            "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>" "${DIR_OUT_BIN}/"
         COMMAND_EXPAND_LISTS
-        COMMENT "Adding DLL libraries to output directory"
+        COMMENT "Copying project runtime DLLs libraries to output directory"
+    )
+endif()
+if(TARGET_PLATFORM STREQUAL "Mingw")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LIBGCC_DLL}" "${DIR_OUT_BIN}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LIBSTDCPP_DLL}" "${DIR_OUT_BIN}/"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${LIBPTHREAD_DLL}" "${DIR_OUT_BIN}/"
+        COMMENT "Copying MinGW runtime DLLs libraries to output directory"
     )
 endif()
 

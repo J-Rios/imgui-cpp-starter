@@ -88,4 +88,25 @@ list(APPEND LINK_FLAGS
     -Wl,--print-memory-usage
 )
 
+# Get libgcc DLL
+execute_process(
+    COMMAND ${CMAKE_C_COMPILER} -print-file-name=libgcc_s_seh-1.dll
+    OUTPUT_VARIABLE LIBGCC_DLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get libstdc++ DLL
+execute_process(
+    COMMAND ${CMAKE_C_COMPILER} -print-file-name=libstdc++-6.dll
+    OUTPUT_VARIABLE LIBSTDCPP_DLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get winpthread DLL
+execute_process(
+    COMMAND ${CMAKE_C_COMPILER} -print-file-name=libwinpthread-1.dll
+    OUTPUT_VARIABLE LIBPTHREAD_DLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
 ###############################################################################
