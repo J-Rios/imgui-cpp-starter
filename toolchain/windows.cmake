@@ -45,12 +45,12 @@ list(APPEND OPTIMIZATION_FLAGS
     -fdata-sections
 #   -flto
 )
-if (CMAKE_BUILD_TYPE MATCHES Debug)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
     list(APPEND OPTIMIZATION_FLAGS
         -O0
         -g
     )
-elseif (CMAKE_BUILD_TYPE MATCHES Release)
+elseif(CMAKE_BUILD_TYPE MATCHES Release)
     list(APPEND OPTIMIZATION_FLAGS
         -Os
     )
@@ -77,11 +77,14 @@ list(APPEND CXX_FLAGS
 # Linker Flags
 set(LINK_FLAGS)
 list(APPEND LINK_FLAGS
-#   -static
-#   -flto
-    -Wl,/OPT:REF
-    -Wl,/OPT:ICF
     -Wl,/INCLUDE:__chkstk
 )
+if(CMAKE_BUILD_TYPE MATCHES Release)
+    list(APPEND LINK_FLAGS
+        -Wl,/OPT:REF
+        -Wl,/OPT:ICF
+        -Wl,/DEBUG:NONE
+    )
+endif()
 
 ###############################################################################

@@ -82,11 +82,14 @@ list(APPEND CXX_FLAGS
 set(LINK_FLAGS)
 list(APPEND LINK_FLAGS
 #   -static
-#   -flto
-    -Wl,-cref
     -Wl,--gc-sections
-    -Wl,--print-memory-usage
 )
+if(CMAKE_BUILD_TYPE MATCHES Release)
+    list(APPEND LINK_FLAGS
+    #   -flto
+        -Wl,-strip-all
+    )
+endif()
 
 # Get libgcc DLL
 execute_process(
