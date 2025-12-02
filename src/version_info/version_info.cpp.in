@@ -1,0 +1,33 @@
+/**
+ * @file    version_info.cpp
+ * @author  Jose Miguel Rios Rubio
+ * @date    2025.12.03
+ * @version 1.0.0
+ * @brief   Project version information file to be populate from build system.
+ */
+
+/*****************************************************************************/
+
+/* Libraries */
+
+// Header Interface
+#include "version_info.h"
+
+/*****************************************************************************/
+
+/* Project Version Information */
+
+const char* const PROJECT_NAME = "@PROJECT_NAME@";
+const char* const PROJECT_VERSION = "v@VERSION_X@.@VERSION_Y@.@VERSION_Z@@VERSION_SUFFIX@";
+const char* const BUILD_DATE = __DATE__;
+const char* const BUILD_TIME = __TIME__;
+
+const bool VERSION_DEV = @VERSION_DEV@;
+const int VERSION_X = @VERSION_X@;
+const int VERSION_Y = @VERSION_Y@;
+const int VERSION_Z = @VERSION_Z@;
+
+const char* const PROJECT_TITLE =
+    "@PROJECT_NAME@ v@VERSION_X@.@VERSION_Y@.@VERSION_Z@@VERSION_SUFFIX@ (" __DATE__ " - " __TIME__ ")";
+
+/*****************************************************************************/

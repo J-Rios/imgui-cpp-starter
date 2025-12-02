@@ -29,7 +29,7 @@ set(DIR_CMAKE_TOOLCHAIN ${CMAKE_SOURCE_DIR}/toolchain)
 ### Build Options ###
 
 # Target Build Platform OS
-set(TARGET_PLATFORM "Linux" CACHE STRING "Target Build: Linux/Windows/Mingw") 
+set(TARGET_PLATFORM "Linux" CACHE STRING "Target Build: Linux/Windows/Mingw")
 set_property(CACHE TARGET_PLATFORM PROPERTY STRINGS Linux Windows Mingw)
 
 # Dear Imgui Backend to use
@@ -74,8 +74,10 @@ endif()
 
 # Set Version String
 set(VERSION v_${VERSION_X}_${VERSION_Y}_${VERSION_Z})
+set(VERSION_SUFFIX "")
 if(VERSION_DEV)
-    set(VERSION ${VERSION}_dev)
+    set(VERSION_SUFFIX "_dev")
+    set(VERSION ${VERSION}${VERSION_SUFFIX})
 endif()
 
 # Set Project build output binary name
@@ -185,7 +187,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${DIR_INC})
 
 # Add subdirectories
 add_subdirectory(src/imgui_demo)
-add_subdirectory(src/version)
+add_subdirectory(src/version_info)
 # ...
 
 # Add Compile Definitions
@@ -193,9 +195,9 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPILE_DEFS})
 
 # Libraries for linkage (-lLIBRARY)
 target_link_libraries(${PROJECT_NAME}
-    app_version_info
     imgui
     imgui_demo
+    version_info
 )
 if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME}
@@ -225,16 +227,16 @@ set_target_properties(${PROJECT_NAME}
 
 ### Pre-Build Targets ###
 
-# Write CMake Version variables into C/C++ code version file
+# Write CMake variables into C/C++ code project version information file
 configure_file(
-    ${DIR_SRC}/version/src/version.cpp.in
-    ${DIR_SRC}/version/src/version.cpp
+    ${DIR_SRC}/version_info/version_info.cpp.in
+    ${DIR_SRC}/version_info/version_info.cpp
     @ONLY
 )
 
-# Touch version.cpp file to force update __DATE__ and __TIME__ and rebuild it
+# Touch version_info.cpp to force update __DATE__ and __TIME__ and rebuild it
 add_custom_target(update_version
-    ${CMAKE_COMMAND} -E touch ${DIR_SRC}/version/src/version.cpp
+    ${CMAKE_COMMAND} -E touch ${DIR_SRC}/version_info/version_info.cpp
 )
 
 # Setup the Pre-Build Targets as dependencies to run before the Build
