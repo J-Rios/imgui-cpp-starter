@@ -21,6 +21,18 @@ It provides a complete setup using **CMake** (as build system generator) and **N
 The following commands install all required tools on **Ubuntu 24.04**.  
 For other distributions or operating systems, find and install the equivalent packages.
 
+### Option A - Installation script
+
+For an easy installation just run the provided script:
+
+```bash
+cd tool
+chmod +x ubuntu_24_install_requirements
+sudo ./ubuntu_24_install_requirements
+```
+
+### Option B - Manual step-by-step installation
+
 1. Update APT repositories
 
 ```bash
