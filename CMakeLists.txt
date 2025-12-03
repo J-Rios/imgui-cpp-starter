@@ -182,20 +182,22 @@ set(SRC_FILES
 # Build executable binary
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
+# Add Compile Definitions
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPILE_DEFS})
+
 # Add headers directories
 target_include_directories(${PROJECT_NAME} PUBLIC ${DIR_INC})
 
 # Add subdirectories
+add_subdirectory(src/imgui_app)
 add_subdirectory(src/imgui_demo)
 add_subdirectory(src/version_info)
 # ...
 
-# Add Compile Definitions
-target_compile_definitions(${PROJECT_NAME} PRIVATE ${COMPILE_DEFS})
-
 # Libraries for linkage (-lLIBRARY)
 target_link_libraries(${PROJECT_NAME}
     imgui
+    imgui_app
     imgui_demo
     version_info
 )

@@ -1,7 +1,7 @@
 /**
  * @file    version_info.h
- * @author  Jose Miguel Rios Rubio
- * @date    2025.12.03
+ * @author  Jose Miguel Rios Rubio <jrios.github@gmail.com>
+ * @date    2025-12-03
  * @version 1.0.0
  * @brief   Project version information file to be populate from build system.
  */
