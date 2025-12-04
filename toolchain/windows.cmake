@@ -87,4 +87,11 @@ if(CMAKE_BUILD_TYPE MATCHES Release)
     )
 endif()
 
+# Set Static/Dynamic Linkage
+if(BUILD_STATIC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
+else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+endif()
+
 ###############################################################################

@@ -19,8 +19,12 @@ set(DIR_DEPS_TOOL ${CMAKE_SOURCE_DIR}/deps/tools)
 
 if(IMGUI_BACKEND STREQUAL "GLFW")
     message(STATUS "Fetching GLFW...")
-    if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
-        set(GLFW_LIBRARY_TYPE SHARED CACHE STRING "GLFW as shared lib" FORCE)
+    if(BUILD_STATIC)
+        set(GLFW_LIBRARY_TYPE STATIC CACHE STRING "GLFW as static lib" FORCE)
+    else()
+        if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
+            set(GLFW_LIBRARY_TYPE SHARED CACHE STRING "GLFW as shared lib" FORCE)
+        endif()
     endif()
     FetchContent_Declare(
         glfw

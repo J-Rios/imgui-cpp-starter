@@ -79,9 +79,13 @@ list(APPEND CXX_FLAGS
 # Linker Flags
 set(LINK_FLAGS)
 list(APPEND LINK_FLAGS
-#   -static
     -Wl,--gc-sections
 )
+if(BUILD_STATIC)
+    list(APPEND LINK_FLAGS
+        -static
+    )
+endif()
 if(CMAKE_BUILD_TYPE MATCHES Release)
     list(APPEND LINK_FLAGS
     #   -flto

@@ -36,6 +36,11 @@ set_property(CACHE TARGET_PLATFORM PROPERTY STRINGS Linux Windows Mingw)
 set(IMGUI_BACKEND "SDL" CACHE STRING "Backend for Dear ImGui")
 set_property(CACHE IMGUI_BACKEND PROPERTY STRINGS "SDL" "GLFW")
 
+# Build with static/dynamic library linkage
+option(BUILD_STATIC
+    "Link statically instead of dynamically (SDL unsupported)" OFF
+)
+
 ###############################################################################
 
 ### Check For Required Tools ###
@@ -101,6 +106,9 @@ if(IMGUI_BACKEND STREQUAL "SDL")
     set(DIR_OUT_BIN ${DIR_OUT_BIN}/sdl)
 elseif(IMGUI_BACKEND STREQUAL "GLFW")
     set(DIR_OUT_BIN ${DIR_OUT_BIN}/glfw)
+endif()
+if(BUILD_STATIC)
+    set(DIR_OUT_BIN ${DIR_OUT_BIN}_static)
 endif()
 set(DIR_OUT_BIN ${DIR_OUT_BIN}/${PROJECT_OUT})
 
@@ -268,23 +276,27 @@ add_custom_command(
 # Add Windows DLL libraries to output directory
 # Note: If a library has not been built as shared library, this will fail
 if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>" "${DIR_OUT_BIN}/"
-        COMMAND_EXPAND_LISTS
-        COMMENT "Copying project runtime DLLs libraries to output directory"
-    )
+    if(NOT BUILD_STATIC OR IMGUI_BACKEND STREQUAL "SDL")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>" "${DIR_OUT_BIN}/"
+            COMMAND_EXPAND_LISTS
+            COMMENT "Copying project runtime DLLs libs to output directory"
+        )
+    endif()
 endif()
 if(TARGET_PLATFORM STREQUAL "Mingw")
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${LIBGCC_DLL}" "${DIR_OUT_BIN}/"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${LIBSTDCPP_DLL}" "${DIR_OUT_BIN}/"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${LIBPTHREAD_DLL}" "${DIR_OUT_BIN}/"
-        COMMENT "Copying MinGW runtime DLLs libraries to output directory"
-    )
+    if(NOT BUILD_STATIC)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${LIBGCC_DLL}" "${DIR_OUT_BIN}/"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${LIBSTDCPP_DLL}" "${DIR_OUT_BIN}/"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${LIBPTHREAD_DLL}" "${DIR_OUT_BIN}/"
+            COMMENT "Copying MinGW runtime DLLs libs to output directory"
+        )
+    endif()
 endif()
 
 ###############################################################################

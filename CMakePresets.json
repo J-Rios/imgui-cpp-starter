@@ -49,6 +49,11 @@
             "cacheVariables": { "IMGUI_BACKEND": "GLFW" }
         },
         {
+            "name": "static-link",
+            "hidden": true,
+            "cacheVariables": { "BUILD_STATIC": "ON" }
+        },
+        {
             "name": "linux-debug-sdl",
             "displayName": "linux-debug-sdl",
             "description": "Native Linux Debug build (Imgui SDL)",
@@ -105,6 +110,14 @@
             "installDir": "${sourceDir}/bin/mingw-release/sdl"
         },
         {
+            "name": "mingw-release-glfw-static",
+            "displayName": "mingw-release-glfw-static",
+            "description": "Windows Release build from Linux with static linkage (Imgui GLFW)",
+            "inherits": ["common", "mingw", "release", "imgui-glfw", "static-link"],
+            "binaryDir": "${sourceDir}/build/mingw-release/glfw-static",
+            "installDir": "${sourceDir}/bin/mingw-release/glfw-static"
+        },
+        {
             "name": "mingw-release-glfw",
             "displayName": "mingw-release-glfw",
             "description": "Windows Release build from Linux (Imgui GLFW)",
@@ -143,6 +156,14 @@
             "inherits": ["common", "windows", "release", "imgui-glfw"],
             "binaryDir": "${sourceDir}/build/windows-release/glfw",
             "installDir": "${sourceDir}/bin/windows-release/glfw"
+        },
+        {
+            "name": "windows-release-glfw-static",
+            "displayName": "windows-release-glfw-static",
+            "description": "Native Windows Release build with static linkage (Imgui GLFW)",
+            "inherits": ["common", "windows", "release", "imgui-glfw", "static-link"],
+            "binaryDir": "${sourceDir}/build/windows-release/glfw-static",
+            "installDir": "${sourceDir}/bin/windows-release/glfw-static"
         }
     ],
     "buildPresets":
@@ -206,6 +227,12 @@
             "name": "windows-release-glfw",
             "configurePreset": "windows-release-glfw",
             "description": "Native Windows Debug build (Imgui GLFW)"
+        },
+        {
+            "name": "windows-release-glfw-static",
+            "configurePreset": "windows-release-glfw-static",
+            "description":
+              "Native Windows Debug build with static linkage (Imgui GLFW)"
         }
     ]
 }
