@@ -15,6 +15,7 @@
 
 // Standard Libraries
 #include <iostream>
+#include <random>
 
 // Imgui Libraries
 #include "imgui.h"
@@ -28,12 +29,36 @@
 
 /*****************************************************************************/
 
+/* Data Types */
+
+/**
+ * @brief RGB Color structure.
+ */
+struct s_color
+{
+    float red;
+    float green;
+    float blue;
+};
+
+/*****************************************************************************/
+
+/* Function Prototypes */
+
+/**
+ * @brief Generate and return a random RGB color.
+ * @return s_color Random RGB color structure.
+ */
+static s_color color_random();
+
+/*****************************************************************************/
+
 /* Main Imgui Function */
 
 int imgui_app()
 {
-    static constexpr int WINDOW_WIDTH = 1280;
-    static constexpr int WINDOW_HEIGHT = 1024;
+    static constexpr int WINDOW_WIDTH = 800;
+    static constexpr int WINDOW_HEIGHT = 600;
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -49,6 +74,7 @@ int imgui_app()
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, gl_context);
+    SDL_GL_SetSwapInterval(1);  // Limit FPS to monitor framerate
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -72,10 +98,15 @@ int imgui_app()
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Ventana");
+        ImGui::Begin("Window");
         ImGui::Text("Running ImGui + SDL2");
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         if (ImGui::Button("Press"))
-        {   SDL_Log("Button pressed");   }
+        {
+            SDL_Log("Button pressed");
+            s_color bg_color = color_random();
+            glClearColor(bg_color.red, bg_color.green, bg_color.blue, 1.0f);
+        }
         ImGui::End();
 
         ImGui::Render();
@@ -93,6 +124,27 @@ int imgui_app()
     SDL_Quit();
 
     return 0;
+}
+
+/*****************************************************************************/
+
+/* Auxiliary Functions */
+
+/**
+ * @brief Generate and return a random RGB color.
+ * @return s_color Random RGB color structure.
+ */
+static s_color color_random()
+{
+    static std::mt19937 rng(std::random_device{}());
+    static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+    s_color random_color;
+    random_color.red = dist(rng);
+    random_color.green = dist(rng);
+    random_color.blue = dist(rng);
+
+    return random_color;
 }
 
 /*****************************************************************************/

@@ -15,6 +15,7 @@
 
 // Standard Libraries
 #include <iostream>
+#include <random>
 
 // Imgui Libraries
 #include "imgui.h"
@@ -27,12 +28,36 @@
 
 /*****************************************************************************/
 
+/* Data Types */
+
+/**
+ * @brief RGB Color structure.
+ */
+struct s_color
+{
+    float red;
+    float green;
+    float blue;
+};
+
+/*****************************************************************************/
+
+/* Function Prototypes */
+
+/**
+ * @brief Generate and return a random RGB color.
+ * @return s_color Random RGB color structure.
+ */
+static s_color color_random();
+
+/*****************************************************************************/
+
 /* Main Imgui Function */
 
 int imgui_app()
 {
-    static constexpr int WINDOW_WIDTH = 1280;
-    static constexpr int WINDOW_HEIGHT = 1024;
+    static constexpr int WINDOW_WIDTH = 800;
+    static constexpr int WINDOW_HEIGHT = 600;
 
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -45,6 +70,7 @@ int imgui_app()
         nullptr
     );
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);  // Limit FPS to monitor framerate
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -63,8 +89,13 @@ int imgui_app()
 
         ImGui::Begin("Window");
         ImGui::Text("Running ImGui + GLFW");
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         if (ImGui::Button("Press"))
-        {   std::printf("Button Pressed\n");   }
+        {
+            std::printf("Button Pressed\n");
+            s_color bg_color = color_random();
+            glClearColor(bg_color.red, bg_color.green, bg_color.blue, 1.0f);
+        }
         ImGui::End();
 
         ImGui::Render();
@@ -81,6 +112,28 @@ int imgui_app()
     glfwTerminate();
 
     return 0;
+}
+
+
+/*****************************************************************************/
+
+/* Auxiliary Functions */
+
+/**
+ * @brief Generate and return a random RGB color.
+ * @return s_color Random RGB color structure.
+ */
+static s_color color_random()
+{
+    static std::mt19937 rng(std::random_device{}());
+    static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+    s_color random_color;
+    random_color.red = dist(rng);
+    random_color.green = dist(rng);
+    random_color.blue = dist(rng);
+
+    return random_color;
 }
 
 /*****************************************************************************/
