@@ -3,5 +3,9 @@
     "editor.copyWithSyntaxHighlighting": false,
 
     // Vscode max number of characters on line vertical lines
-    "editor.rulers": [ 79 ],
+    "editor.rulers": [
+        79
+    ],
+
+    // Extra configurations
 }
