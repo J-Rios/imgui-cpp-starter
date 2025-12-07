@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Description: Install Docker Image for Dear Imgui C++ projects build.
+
+###############################################################################
+
+# Actual Script Name
+SCRIPT_NAME=$(basename $0)
+
+# Actual script directory path
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+# Setup OCI Container Image
+OCI_IMAGE="docker.io/jriosbyte/dear-imgui-cpp-builder:v1.0.0"
+
+###############################################################################
+
+# Handle Arguments
+if [ $# -eq 0 ]; then
+    echo "Please, specify OCI tool to use (docker, podman...)"
+    echo "Examples:"
+    echo "  ${SCRIPT_NAME} docker"
+    echo "  ${SCRIPT_NAME} podman"
+    exit 1
+fi
+OCI="${1}"
+
+# Container Pull Installation
+echo ""
+echo "-----------------------------------------------------------"
+echo "-- Installing Container Image                            --"
+echo "-----------------------------------------------------------"
+echo "Pulling '${OCI_IMAGE}'..."
+${OCI} pull "${OCI_IMAGE}"
+if [[ $? -ne 0 ]]; then
+    echo "Error: Image pull fail."
+    exit 1
+fi
+echo "Image '${OCI_IMAGE}' installation success"
+echo ""
+
+exit 0
+
+###############################################################################

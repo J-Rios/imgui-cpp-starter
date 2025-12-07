@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+###############################################################################
+
+# Actual Script Name
+SCRIPT_NAME=$(basename $0)
+
+# Actual script directory path
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+# Setup
+IMAGE_NAME="jriosbyte/dear-imgui-cpp-builder:v1.0.0"
+CONTAINER_NAME="dear-imgui-cpp-builder"
+PROJECT_PATH=$(realpath "${DIR}/../")
+PROJECT_NAME=$(basename "$PROJECT_PATH")
+
+###############################################################################
+
+# Build Function
+docker_run()
+{
+    if [ $# -eq 0 ]; then
+        echo "Invalid usage of docker_run() function (missing argument)"
+        exit 1
+    fi
+
+    ${OCI} run \
+        --network="host" --rm \
+        --name $CONTAINER_NAME \
+        -v "${PROJECT_PATH}":"/workspace/${PROJECT_NAME}" \
+        -w "/workspace/${PROJECT_NAME}" \
+        $IMAGE_NAME \
+        bash -c "${1}"
+
+    exit $?
+}
+
+###############################################################################
+
+# Check Arguments
+if [ $# -lt 2 ]; then
+    echo ""
+    echo "You need to specify a CMake preset to build and OCI tool to use:"
+    echo "  ${SCRIPT_NAME} [PRESET] [OCI_TOOL]"
+    echo "Presets:"
+    echo "  linux-debug-sdl docker"
+    echo "  linux-debug-glfw docker"
+    echo "  linux-release-sdl"
+    echo "  linux-release-glfw"
+    echo "  mingw-debug-sdl"
+    echo "  mingw-debug-glfw"
+    echo "  mingw-release-sdl"
+    echo "  mingw-release-glfw"
+    echo "  mingw-release-glfw-static"
+    echo "OCI Tools:"
+    echo "  docker"
+    echo "  podman"
+    echo "  ..."
+    echo ""
+    exit 1
+fi
+PRESET=$1
+OCI=$2
+
+# Header
+echo ""
+echo "-----------------------------------------------------------"
+echo "-- Project Build - ${PRESET}                             --"
+echo "-----------------------------------------------------------"
+echo "Building project '${PROJECT_PATH}'..."
+echo ""
+
+# Check if the project path exists
+if [ ! -d "$PROJECT_PATH" ]; then
+    echo "Error: Project path not found"
+    echo ""
+    exit 1
+fi
+
+# Clear CMake cache and dependencies
+find ${DIR}/../build -name CMakeCache.txt -type f -exec rm -f {} +
+find ${DIR}/../build -name CMakeFiles -type d -exec rm -rf {} +
+
+# Run Container to build
+docker_run "cmake --preset ${PRESET} && cmake --build --preset ${PRESET}"
+BUILD_RESULT=$?
+
+# Clear CMake cache
+find ${DIR}/../build -name CMakeCache.txt -type f -exec rm -f {} +
+find ${DIR}/../build -name CMakeFiles -type d -exec rm -rf {} +
+
+# Verify the result
+echo ""
+if [ $BUILD_RESULT -ne 0 ]; then
+    echo "Build Fail (error code ${BUILD_RESULT})"
+    exit $BUILD_RESULT
+else
+    echo "Build success"
+fi
+
+exit 0
+
+###############################################################################

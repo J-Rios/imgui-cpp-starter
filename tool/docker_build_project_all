@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+###############################################################################
+
+# Actual script directory path
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+###############################################################################
+
+# Handle Arguments
+if [ $# -eq 0 ]; then
+    echo "Please, specify OCI tool to use (docker, podman...)"
+    echo "Examples:"
+    echo "  ${SCRIPT_NAME} docker"
+    echo "  ${SCRIPT_NAME} podman"
+    exit 1
+fi
+OCI="${1}"
+
+# Build project for all presets
+${DIR}/docker_build_project linux-debug-sdl $OCI
+${DIR}/docker_build_project linux-debug-glfw $OCI
+${DIR}/docker_build_project linux-release-sdl $OCI
+${DIR}/docker_build_project linux-release-glfw $OCI
+${DIR}/docker_build_project mingw-debug-sdl $OCI
+${DIR}/docker_build_project mingw-debug-glfw $OCI
+${DIR}/docker_build_project mingw-release-sdl $OCI
+${DIR}/docker_build_project mingw-release-glfw $OCI
+${DIR}/docker_build_project mingw-release-glfw-static $OCI
+
+exit 0
+
+###############################################################################
