@@ -1,0 +1,92 @@
+
+###############################################################################
+
+name: Project Build
+
+###############################################################################
+
+# Trigger the jobs on:
+# - A pull request is opened or a new commit is added to the pull request
+# - A new release is created or a release is edited
+on:
+  pull_request:
+    types: [opened, synchronize]
+  release:
+    types: [published, edited]
+
+###############################################################################
+
+# Jobs to run
+jobs:
+
+  # Build the project and upload Release APK to Github artifacts
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.io/jriosbyte/dear-imgui-cpp-builder:v1.0.1
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Build the project
+        run: |
+          cmake --preset mingw-release-glfw && \
+            cmake --build --preset mingw-release-glfw
+          cmake --preset mingw-release-sdl && \
+            cmake --build --preset mingw-release-sdl
+          cmake --preset linux-release-glfw && \
+            cmake --build --preset linux-release-glfw
+          cmake --preset linux-release-sdl && \
+            cmake --build --preset linux-release-sdl
+
+      - name: Compress binaries
+        run: |
+          PRJ_DIR=$(pwd)
+          cd bin/windows/release/glfw && \
+            BIN=$(ls) && \
+            zip -r "../../../windows-${BIN}-glfw.zip" "${BIN}"
+          cd $PRJ_DIR
+          cd bin/windows/release/sdl && \
+            BIN=$(ls) && \
+            zip -r "../../../windows-${BIN}-sdl.zip" "${BIN}"
+          cd $PRJ_DIR
+          cd bin/linux/release/glfw && \
+            BIN=$(ls) && \
+            tar -czf ../../../linux-${BIN}-glfw.tar.gz "${BIN}"
+          cd $PRJ_DIR
+          cd bin/linux/release/sdl && \
+            BIN=$(ls) && \
+            tar -czf ../../../linux-${BIN}-sdl.tar.gz "${BIN}"
+          cd $PRJ_DIR
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            bin/*.zip
+            bin/*.tar.gz
+
+  # Upload Built Binaries to Github Release
+  release-upload-artifacts:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: artifacts
+
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+###############################################################################
