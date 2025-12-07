@@ -41,6 +41,10 @@ endif()
 
 if(IMGUI_BACKEND STREQUAL "SDL")
     message(STATUS "Fetching SDL...")
+    if(BUILD_STATIC OR CMAKE_BUILD_TYPE MATCHES Debug)
+        set(SDL_STATIC_ENABLED_BY_DEFAULT ON CACHE BOOL "" FORCE)
+        set(SDL_SHARED_ENABLED_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+    endif()
     FetchContent_Declare(
         SDL2
         GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
