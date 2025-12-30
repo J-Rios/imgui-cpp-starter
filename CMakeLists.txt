@@ -15,6 +15,7 @@ set(PROJECT_NAME imguiapp)
 project(${PROJECT_NAME} LANGUAGES ASM C CXX)
 
 # Project Directory Paths
+set(DIR_ASSETS ${CMAKE_SOURCE_DIR}/deps/assets)
 set(DIR_BIN ${CMAKE_SOURCE_DIR}/bin)
 set(DIR_BUILD ${CMAKE_SOURCE_DIR}/build)
 set(DIR_DOC ${CMAKE_SOURCE_DIR}/doc)
@@ -259,18 +260,20 @@ add_dependencies(${PROJECT_NAME}
 
 ### Post-Build Targets ###
 
-# Copy executable file to debug/ and bin/ directory
+# Copy executable and assets to debug/ and bin/ directory
 add_custom_command(
     TARGET ${PROJECT_NAME}
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${DIR_OUT_BIN}"
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:${PROJECT_NAME}>"
         "${DIR_BUILD}/${PROJECT_NAME}"
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:${PROJECT_NAME}>"
         "${DIR_OUT_BIN}/"
-    COMMENT "Copying output binary to debug/ and bin/ directories"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_BUILD}/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_OUT_BIN}/"
+    COMMENT "Copying output binary and assets to debug/ and bin/ directories"
 )
 
 # Add Windows DLL libraries to output directory
