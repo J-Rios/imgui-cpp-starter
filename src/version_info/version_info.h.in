@@ -14,10 +14,23 @@
 
 /*****************************************************************************/
 
+/* Build System Defines */
+
+#define __PRJ_NAME__ "@PROJECT_NAME@"
+#define __PRJ_VERSION__ "v@VERSION_X@.@VERSION_Y@.@VERSION_Z@@VERSION_SUFFIX@"
+#define __BUILD_TYPE__ "@CMAKE_BUILD_TYPE@"
+#define __VERSION_X__ @VERSION_X@
+#define __VERSION_Y__ @VERSION_Y@
+#define __VERSION_Z__ @VERSION_Z@
+#define __VERSION_DEV__ @VERSION_DEV@
+
+/*****************************************************************************/
+
 /* Project Version Information */
 
 extern const char* const PROJECT_NAME;
 extern const char* const PROJECT_VERSION;
+extern const char* const BUILD_TYPE;
 extern const char* const BUILD_DATE;
 extern const char* const BUILD_TIME;
 

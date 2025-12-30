@@ -239,8 +239,8 @@ set_target_properties(${PROJECT_NAME}
 
 # Write CMake variables into C/C++ code project version information file
 configure_file(
-    ${DIR_SRC}/version_info/version_info.cpp.in
-    ${DIR_SRC}/version_info/version_info.cpp
+    ${DIR_SRC}/version_info/version_info.h.in
+    ${DIR_SRC}/version_info/version_info.h
     @ONLY
 )
 
