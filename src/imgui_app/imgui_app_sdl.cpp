@@ -46,6 +46,11 @@ struct s_color
 /* Function Prototypes */
 
 /**
+ * @brief Limit framerate to 60 FPS.
+ */
+static void limit_fps();
+
+/**
  * @brief Generate and return a random RGB color.
  * @return s_color Random RGB color structure.
  */
@@ -59,6 +64,7 @@ int imgui_app()
 {
     static constexpr int WINDOW_WIDTH = 800;
     static constexpr int WINDOW_HEIGHT = 600;
+    static bool vsync_enabled = false;
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -73,8 +79,19 @@ int imgui_app()
     );
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
+
+    // Limit FPS to display framerate
+    bool vsync_limit = true;
     SDL_GL_MakeCurrent(window, gl_context);
-    SDL_GL_SetSwapInterval(1);  // Limit FPS to monitor framerate
+    if (SDL_GL_SetSwapInterval(-1) < 0)
+    {
+        if (SDL_GL_SetSwapInterval(1) < 0)
+        {
+            std::printf("Warning: Fail to limit FPS with V-Sync\n");
+            vsync_limit = false;
+        }
+    }
+    vsync_enabled = vsync_limit;
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -114,6 +131,10 @@ int imgui_app()
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);
+
+        // Limit framerate if vsync is not enabled
+        if (!vsync_enabled)
+        {   limit_fps();   }
     }
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -130,10 +151,24 @@ int imgui_app()
 
 /* Auxiliary Functions */
 
-/**
- * @brief Generate and return a random RGB color.
- * @return s_color Random RGB color structure.
- */
+static void limit_fps()
+{
+    static constexpr uint8_t DEFAULT_FPS_LIMIT = 60U;
+    static constexpr float frame_limit_time =
+        static_cast<float>(1.0F / DEFAULT_FPS_LIMIT);
+
+    static uint64_t t0_frame = SDL_GetPerformanceCounter();
+
+    float frame_time =
+        static_cast<float>(SDL_GetPerformanceCounter() - t0_frame) /
+        static_cast<float>(SDL_GetPerformanceFrequency());
+
+    if (frame_time < frame_limit_time)
+    {   SDL_Delay((uint32_t)((frame_limit_time - frame_time) * 1000.0f));   }
+
+    t0_frame = SDL_GetPerformanceCounter();
+}
+
 static s_color color_random()
 {
     static std::mt19937 rng(std::random_device{}());
