@@ -15,7 +15,7 @@
 #include <iostream>
 
 // Auxiliary Libraries
-#include "imgui_app.h"
+#include "app.h"
 #include "imgui_demo.h"
 #include "version_info.h"
 
@@ -27,24 +27,33 @@ int main(int argc, char* argv[])
 {
     (void)(argc);
     (void)(argv);
+    int return_code = 0;
+    bool run_demo = false;
 
     std::printf("%s\n", PROJECT_TITLE);
 
+    // Handle Input Arguments
     if (argc > 1)
     {
-        std::string run_demo(argv[1]);
-        if (run_demo == "--demo")
-        {
-            std::printf("Running Imgui Demo App\n");
-            imgui_demo();
-            return 0;
-        }
+        std::string arg_run_demo(argv[1]);
+        if (arg_run_demo == "--demo")
+        {   run_demo = true;   }
     }
 
-    std::printf("Running Imgui User App\n");
-    imgui_app();
+    // Run App or Demo
+    if (run_demo)
+    {
+        std::printf("Running Imgui Demo App\n");
+        imgui_demo();
+    }
+    else
+    {
+        std::printf("Running Imgui User App\n");
+        static App app(PROJECT_TITLE);
+        return_code = app.run();
+    }
 
-    return 0;
+    return return_code;
 }
 
 /*****************************************************************************/

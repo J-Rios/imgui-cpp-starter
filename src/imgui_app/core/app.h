@@ -1,0 +1,109 @@
+/**
+ * @file    app.h
+ * @date    2026-01-01
+ * @version 1.0.0
+ * @brief   Application main class definition file.
+ * @details This component shall contains the application logic.
+ * @note    Don't mix app logic and UI, any UI related code shall be added to
+ *          "ui" components.
+ */
+
+/*****************************************************************************/
+
+/* Include Guard */
+
+#pragma once
+
+/*****************************************************************************/
+
+/* Libraries */
+
+// Standard Libraries
+#include <memory>
+
+// Auxiliary Headers
+#include "backend_interface.h"
+#include "ui_interface.h"
+#include "app_context.h"
+
+/*****************************************************************************/
+
+/* Application Orchestrator */
+
+/**
+ * @brief Application Main Class.
+ */
+class App
+{
+    /*************************************************************************/
+
+    /* Public Methods */
+
+    public:
+
+    /**
+     * @brief Construct a new App object.
+     * @param app_name Name to give for this Application.
+     */
+    App(const char* app_name);
+
+    /**
+     * @brief Run the Application.
+     * @return int Application execution finish return code.
+     */
+    int run();
+
+    /*************************************************************************/
+
+    /* Private Attributes */
+
+    private:
+
+    /**
+     * @brief Application Name.
+     */
+    const char* name_app;
+
+    /**
+     * @brief Imgui Backend to use.
+     */
+    std::unique_ptr<IBackend> backend;
+
+    /**
+     * @brief UI drawer component to use.
+     */
+    IUI* ui = nullptr;
+
+    /**
+     * @brief Application Data Context.
+     */
+    AppContext context;
+
+    /*************************************************************************/
+
+    /* Private Methods */
+
+    private:
+
+    /**
+     * @brief Check and handle events.
+     */
+    void handle_events();
+
+    /**
+     * @brief Initial configuration of the UI.
+     */
+    void setup_ui();
+
+    /**
+     * @brief Draw and render a new frame of the UI.
+     */
+    void draw_ui();
+
+    /**
+     * @brief Close the UI and all it elements.
+     */
+    void close_ui();
+};
+
+/*****************************************************************************/
