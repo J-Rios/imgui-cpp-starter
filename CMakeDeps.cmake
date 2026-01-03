@@ -33,6 +33,17 @@ if(IMGUI_BACKEND STREQUAL "GLFW")
         SOURCE_DIR ${DIR_DEPS_LIB}/glfw
     )
     FetchContent_MakeAvailable(glfw)
+
+    message(STATUS "Fetching glad...")
+    FetchContent_Declare(
+        glad
+        GIT_REPOSITORY https://github.com/Dav1dde/glad.git
+        GIT_TAG v2.0.8
+        SOURCE_SUBDIR cmake
+        SOURCE_DIR ${DIR_DEPS_LIB}/glad
+    )
+    FetchContent_MakeAvailable(glad)
+    glad_add_library(glad STATIC REPRODUCIBLE LOADER API gl:core=3.3)
 endif()
 
 ###############################################################################
@@ -90,7 +101,7 @@ if(IMGUI_BACKEND STREQUAL "GLFW")
         ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
         ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
     )
-    set(IMGUI_LINK glfw OpenGL::GL)
+    set(IMGUI_LINK glad glfw OpenGL::GL)
 elseif(IMGUI_BACKEND STREQUAL "SDL")
     list(APPEND IMGUI_SRC
         ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp
