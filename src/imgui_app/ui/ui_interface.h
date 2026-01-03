@@ -16,8 +16,7 @@
 
 /* Libraries */
 
-// Application Data Context
-#include "app_context.h"
+// None
 
 /*****************************************************************************/
 
@@ -30,9 +29,8 @@ struct IUI
 {
     /**
      * @brief Draw the UI.
-     * @param ctx Application data context.
      */
-    virtual void draw(AppContext& ctx) = 0;
+    virtual void draw() = 0;
 
     /**
      * @brief Destroy the IUI object.

@@ -15,15 +15,20 @@
 // Class Interface
 #include "ui_interface.h"
 
+// Auxiliary Libraries
+#include "app_data.h"
+
 /*****************************************************************************/
 
 /* Factory Simple */
 
 /**
  * @brief Create a Main UI object.
+ * @param app_context Application Context Data.
+ * @param app_state Application State Data.
  * @return IUI* Created abstract UI object.
  */
-IUI* CreateMainUI();
+IUI* CreateMainUI(AppContext& app_context, AppState& app_state);
 
 /*****************************************************************************/
 
@@ -37,10 +42,34 @@ class MainUI : public IUI
     public:
 
     /**
+     * @brief Construct the main UI.
+     * @param _context Application context data.
+     * @param _state Application state data.
+     */
+    MainUI(AppContext& app_context, AppState& app_state) :
+        context{app_context}, state{app_state} {}
+
+    /**
      * @brief Draw the main UI.
      * @param ctx Application data context.
      */
-    void draw(AppContext& ctx) override;
+    void draw() override;
+
+    /*************************************************************************/
+
+    /* Private Attributes */
+
+    private:
+
+    /**
+     * @brief Reference to Application Context Data.
+     */
+    AppContext& context;
+
+    /**
+     * @brief Reference to Application State Data.
+     */
+    AppState& state;
 };
 
 /*****************************************************************************/

@@ -22,9 +22,7 @@
 #include <memory>
 
 // Auxiliary Headers
-#include "backend_interface.h"
-#include "ui_interface.h"
-#include "app_context.h"
+#include "app_data.h"
 
 /*****************************************************************************/
 
@@ -60,24 +58,14 @@ class App
     private:
 
     /**
-     * @brief Application Name.
-     */
-    const char* name_app;
-
-    /**
-     * @brief Imgui Backend to use.
-     */
-    std::unique_ptr<IBackend> backend;
-
-    /**
-     * @brief UI drawer component to use.
-     */
-    IUI* ui = nullptr;
-
-    /**
-     * @brief Application Data Context.
+     * @brief Application Context Data.
      */
     AppContext context;
+
+    /**
+     * @brief Application State Data.
+     */
+    AppState state;
 
     /*************************************************************************/
 

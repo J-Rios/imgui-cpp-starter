@@ -1,10 +1,14 @@
 /**
- * @file    app_context.h
+ * @file    app_data.h
  * @date    2026-01-01
  * @version 1.0.0
- * @brief   Application context data definition file.
- * @details The Application context contains the different application data
- *          that can be check by the UI and be set by the application logic.
+ * @brief   Application context and state data definition file.
+ * @details
+ * The Application context contains global configurations, resources and
+ * references that are created and setup during application startup.
+ *
+ * The Application state contains different data that changes during runtime
+ * and is normally check/set by the UI and the application logic.
  */
 
 /*****************************************************************************/
@@ -20,24 +24,40 @@
 // Standard Libraries
 #include <string>
 
+// Interfaces
+#include "backend_interface.h"
+#include "ui_interface.h"
+
 /*****************************************************************************/
 
-/* Application Context */
+/* Application Context Data */
 
 /**
  * @brief Application Context data.
  */
 struct AppContext
 {
-    bool running = true;
+    const char* app_name;
+    std::unique_ptr<IBackend> backend;
+    IUI* ui = nullptr;
+};
 
-    // Ejemplo de estado
+/*****************************************************************************/
+
+/* Application State Data */
+
+/**
+ * @brief Application State data.
+ */
+struct AppState
+{
+    bool running = true;
     bool connect_requested = false;
     bool disconnect_requested = false;
 
     std::string status = "Ready";
 
-    void update_logic()
+    void update()
     {
         if (connect_requested)
         {

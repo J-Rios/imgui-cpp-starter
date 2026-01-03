@@ -22,9 +22,9 @@
 
 /* Factory Simple */
 
-IUI* CreateMainUI()
+IUI* CreateMainUI(AppContext& app_context, AppState& app_state)
 {
-    static MainUI ui;
+    static MainUI ui(app_context, app_state);
     return &ui;
 }
 
@@ -32,22 +32,22 @@ IUI* CreateMainUI()
 
 /* Public Methods */
 
-void MainUI::draw(AppContext& ctx)
+void MainUI::draw()
 {
     ImGui::Begin("Main");
 
-    ImGui::Text("Status: %s", ctx.status.c_str());
+    ImGui::Text("Status: %s", state.status.c_str());
 
     if (ImGui::Button("Connect"))
-    {   ctx.connect_requested = true;   }
+    {   state.connect_requested = true;   }
 
     if (ImGui::Button("Disconnect"))
-    {   ctx.disconnect_requested = true;   }
+    {   state.disconnect_requested = true;   }
 
     ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
     if (ImGui::Button("Exit"))
-    {   ctx.running = false;   }
+    {   state.running = false;   }
 
     ImGui::End();
 }

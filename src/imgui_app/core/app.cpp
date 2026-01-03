@@ -24,25 +24,21 @@
 /* Public Methods */
 
 App::App(const char* app_name)
-:
-    name_app{app_name}
 {
-    extern IUI* CreateMainUI();
+    extern IUI* CreateMainUI(AppContext& app_context, AppState& app_state);
 
-    backend = std::make_unique<IMGUI_BACKEND>();
-    ui = CreateMainUI();
+    context.app_name = app_name;
+    context.backend = std::make_unique<IMGUI_BACKEND>();
+    context.ui = CreateMainUI(context, state);
 }
 
 int App::run()
 {
-    //static constexpr int window_width_min = 640U;
-    //static constexpr int window_heigth_min = 380U;
-
     setup_ui();
 
-    while (context.running)
+    while (state.running)
     {
-        context.update_logic();
+        state.update();
         handle_events();
         draw_ui();
     }
@@ -58,7 +54,7 @@ int App::run()
 
 void App::setup_ui()
 {
-    backend->init(name_app);
+    context.backend->init(context.app_name);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -67,15 +63,15 @@ void App::setup_ui()
 
 void App::draw_ui()
 {
-    backend->new_frame();
+    context.backend->new_frame();
     ImGui::NewFrame();
-    ui->draw(context);
-    backend->render();
+    context.ui->draw();
+    context.backend->render();
 }
 
 void App::close_ui()
 {
-    backend->shutdown();
+    context.backend->shutdown();
     ImGui::DestroyContext();
 }
 
@@ -85,13 +81,13 @@ void App::close_ui()
 
 void App::handle_events()
 {
-    backend->poll_events();
+    context.backend->poll_events();
 
     AppEvent ev;
-    while (backend->pop_event(ev))
+    while (context.backend->pop_event(ev))
     {
         if (ev.type == AppEventType::QUIT)
-        {   context.running = false;   }
+        {   state.running = false;   }
     }
 }
 
