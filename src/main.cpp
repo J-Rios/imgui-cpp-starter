@@ -17,7 +17,7 @@
 // Auxiliary Libraries
 #include "app.h"
 #include "imgui_demo.h"
-#include "version_info.h"
+#include "project_info.h"
 
 /*****************************************************************************/
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     int return_code = 0;
     bool run_demo = false;
 
-    std::printf("%s\n", PROJECT_TITLE);
+    std::printf("%s\n", project_info.PROJECT_TITLE);
 
     // Handle Input Arguments
     if (argc > 1)
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     else
     {
         std::printf("Running Imgui User App\n");
-        static App app(PROJECT_TITLE);
+        static App app(project_info);
         return_code = app.run();
     }
 

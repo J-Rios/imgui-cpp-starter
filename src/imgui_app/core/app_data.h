@@ -24,9 +24,12 @@
 // Standard Libraries
 #include <string>
 
-// Interfaces
+// Class Interfaces
 #include "backend_interface.h"
 #include "ui_interface.h"
+
+// Auxiliary Libraries
+#include "project_info.h"
 
 /*****************************************************************************/
 
@@ -37,7 +40,7 @@
  */
 struct AppContext
 {
-    const char* app_name;
+    const s_project_info* project_info;
     std::unique_ptr<IBackend> backend;
     IUI* ui = nullptr;
 };

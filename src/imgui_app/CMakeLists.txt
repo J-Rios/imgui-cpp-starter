@@ -26,7 +26,7 @@ target_sources(imgui_app
 
 target_link_libraries(imgui_app
     imgui
-    version_info
+    project_info
 )
 
 target_compile_definitions(imgui_app PRIVATE ${COMPILE_DEFS})

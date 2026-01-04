@@ -23,6 +23,7 @@
 
 // Auxiliary Headers
 #include "app_data.h"
+#include "project_info.h"
 
 /*****************************************************************************/
 
@@ -43,7 +44,7 @@ class App
      * @brief Construct a new App object.
      * @param app_name Name to give for this Application.
      */
-    App(const char* app_name);
+    App(const s_project_info& project_information);
 
     /**
      * @brief Run the Application.
@@ -74,11 +75,6 @@ class App
     private:
 
     /**
-     * @brief Check and handle events.
-     */
-    void handle_events();
-
-    /**
      * @brief Initial configuration of the UI.
      */
     void setup_ui();
@@ -92,6 +88,11 @@ class App
      * @brief Close the UI and all it elements.
      */
     void close_ui();
+
+    /**
+     * @brief Check and handle events.
+     */
+    void handle_events();
 };
 
 /*****************************************************************************/

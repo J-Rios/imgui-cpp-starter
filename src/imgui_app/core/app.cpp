@@ -23,11 +23,11 @@
 
 /* Public Methods */
 
-App::App(const char* app_name)
+App::App(const s_project_info& project_information)
 {
     extern IUI* CreateMainUI(AppContext& app_context, AppState& app_state);
 
-    context.app_name = app_name;
+    context.project_info = &project_information;
     context.backend = std::make_unique<IMGUI_BACKEND>();
     context.ui = CreateMainUI(context, state);
 }
@@ -54,7 +54,7 @@ int App::run()
 
 void App::setup_ui()
 {
-    context.backend->init(context.app_name);
+    context.backend->init(context.project_info->PROJECT_NAME);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();

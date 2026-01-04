@@ -207,7 +207,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${DIR_INC})
 # Add subdirectories
 add_subdirectory(src/imgui_app)
 add_subdirectory(src/imgui_demo)
-add_subdirectory(src/version_info)
+add_subdirectory(src/project_info)
 # ...
 
 # Libraries for linkage (-lLIBRARY)
@@ -215,7 +215,7 @@ target_link_libraries(${PROJECT_NAME}
     imgui
     imgui_app
     imgui_demo
-    version_info
+    project_info
 )
 if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME}
@@ -247,14 +247,14 @@ set_target_properties(${PROJECT_NAME}
 
 # Write CMake variables into C/C++ code project version information file
 configure_file(
-    ${DIR_SRC}/version_info/version_info.h.in
-    ${DIR_SRC}/version_info/version_info.h
+    ${DIR_SRC}/project_info/project_info.h.in
+    ${DIR_SRC}/project_info/project_info.h
     @ONLY
 )
 
-# Touch version_info.cpp to force update __DATE__ and __TIME__ and rebuild it
+# Touch project_info.cpp to force update __DATE__ and __TIME__ and rebuild it
 add_custom_target(update_version
-    ${CMAKE_COMMAND} -E touch ${DIR_SRC}/version_info/version_info.cpp
+    ${CMAKE_COMMAND} -E touch ${DIR_SRC}/project_info/project_info.cpp
 )
 
 # Setup the Pre-Build Targets as dependencies to run before the Build
