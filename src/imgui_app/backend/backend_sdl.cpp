@@ -54,7 +54,7 @@ void BackendSDL::shutdown()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
-    //ImGui::DestroyContext();
+    ImGui::DestroyContext();
     SDL_GL_DeleteContext(gl_context);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -88,6 +88,7 @@ void BackendSDL::new_frame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
 }
 
 void BackendSDL::render()
@@ -102,6 +103,12 @@ void BackendSDL::render()
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     SDL_GL_SwapWindow(window);
+    limit_fps();
+}
+
+bool BackendSDL::is_vsync_enabled()
+{
+    return vsync_enabled;
 }
 
 /*****************************************************************************/
@@ -297,6 +304,27 @@ bool BackendSDL::imgui_init() const
     }
 
     return true;
+}
+
+void BackendSDL::limit_fps()
+{
+    // Do nothing if vsync is active
+    if (is_vsync_enabled())
+    {   return;   }
+
+    static constexpr uint8_t DEFAULT_FPS_LIMIT = 60U;
+    static constexpr float frame_limit_time =
+        static_cast<float>(1.0F / DEFAULT_FPS_LIMIT);
+
+    static uint64_t t0_frame = SDL_GetPerformanceCounter();
+    float frame_time =
+        static_cast<float>(SDL_GetPerformanceCounter() - t0_frame) /
+        static_cast<float>(SDL_GetPerformanceFrequency());
+
+    if (frame_time < frame_limit_time)
+    {   SDL_Delay((uint32_t)((frame_limit_time - frame_time) * 1000.0f));   }
+
+    t0_frame = SDL_GetPerformanceCounter();
 }
 
 /*****************************************************************************/

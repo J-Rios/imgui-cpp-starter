@@ -13,7 +13,9 @@
 #include "backend_glfw.h"
 
 // Standard Libraries
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 // Imgui Libraries
 #include "imgui.h"
@@ -64,7 +66,7 @@ void BackendGLFW::shutdown()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
-    //ImGui::DestroyContext();
+    ImGui::DestroyContext();
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -92,6 +94,7 @@ void BackendGLFW::new_frame()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 }
 
 void BackendGLFW::render()
@@ -107,12 +110,17 @@ void BackendGLFW::render()
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     glfwSwapBuffers(window);
+    limit_fps();
+}
+
+bool BackendGLFW::is_vsync_enabled()
+{
+    return vsync_enabled;
 }
 
 /*****************************************************************************/
 
 /* Private Methods */
-
 
 bool BackendGLFW::window_init(const char* title, int width, int height,
     const bool maximized)
@@ -290,6 +298,32 @@ bool BackendGLFW::imgui_init() const
     }
 
     return true;
+}
+
+void BackendGLFW::limit_fps()
+{
+    // Do nothing if vsync is active
+    if (is_vsync_enabled())
+    {   return;   }
+
+    static constexpr uint8_t DEFAULT_FPS_LIMIT = 60U;
+    static constexpr double frame_limit_time =
+        1.0 / static_cast<double>(DEFAULT_FPS_LIMIT);
+
+    static double t0_frame = glfwGetTime();
+
+    double t_now = glfwGetTime();
+    double frame_time = t_now - t0_frame;
+
+    if (frame_time < frame_limit_time)
+    {
+        double sleep_time = frame_limit_time - frame_time;
+        std::this_thread::sleep_for(
+            std::chrono::duration<double>(sleep_time)
+        );
+    }
+
+    t0_frame = glfwGetTime();
 }
 
 /*****************************************************************************/

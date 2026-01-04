@@ -16,7 +16,6 @@
 #include "app.h"
 
 // Imgui Libraries
-#include "imgui.h"
 #include "imgui_backend.h"
 
 /*****************************************************************************/
@@ -38,8 +37,9 @@ int App::run()
 
     while (state.running)
     {
-        state.update();
         handle_events();
+        data_update();
+        behaviour();
         draw_ui();
     }
 
@@ -55,16 +55,12 @@ int App::run()
 void App::setup_ui()
 {
     context.backend->init(context.project_info->PROJECT_NAME);
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
+    context.ui->setup();
 }
 
 void App::draw_ui()
 {
     context.backend->new_frame();
-    ImGui::NewFrame();
     context.ui->draw();
     context.backend->render();
 }
@@ -72,7 +68,6 @@ void App::draw_ui()
 void App::close_ui()
 {
     context.backend->shutdown();
-    ImGui::DestroyContext();
 }
 
 /*****************************************************************************/
@@ -88,7 +83,28 @@ void App::handle_events()
     {
         if (ev.type == AppEventType::QUIT)
         {   state.running = false;   }
+
+        // ...
     }
+}
+
+/*****************************************************************************/
+
+/* Data Updates */
+
+void App::data_update()
+{
+    // Update application state data
+    state.update();
+}
+
+/*****************************************************************************/
+
+/* Application Behaviour*/
+
+void App::behaviour()
+{
+    // None
 }
 
 /*****************************************************************************/

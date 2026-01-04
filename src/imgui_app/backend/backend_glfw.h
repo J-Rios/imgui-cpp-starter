@@ -79,6 +79,13 @@ class BackendGLFW : public IBackend
      */
     void render() override;
 
+    /**
+     * @brief Check if V-Sync is enabled.
+     * @return true V-Sync is enabled.
+     * @return false V-Sync is disabled.
+     */
+    bool is_vsync_enabled() override;
+
     /*************************************************************************/
 
     /* Private Methods */
@@ -109,6 +116,13 @@ class BackendGLFW : public IBackend
      * @return false Initialization fail.
      */
     bool imgui_init() const;
+
+    /**
+     * @brief Limit Framerate to 60 FPSs.
+     * @note Use this when V-Sync is not enabled and you want to limit the
+     * FPS to a safe value.
+     */
+    void limit_fps();
 
     /*************************************************************************/
 

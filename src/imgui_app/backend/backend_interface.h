@@ -43,13 +43,40 @@ struct IBackend
     virtual bool init(const char* window_title, int window_width=0,
         int window_height=0, const bool window_maximized=false) = 0;
 
+    /**
+     * @brief Close all Imgui Backend related components.
+     */
     virtual void shutdown() = 0;
 
+    /**
+     * @brief Backend events handler (check and store events into event queue).
+     */
     virtual void poll_events() = 0;
+
+    /**
+     * @brief Get a previous received event.
+     * @param event Reference to event received.
+     * @return true Received event available.
+     * @return false None received event.
+     */
     virtual bool pop_event(AppEvent& event) = 0;
 
+    /**
+     * @brief Start a new frame to draw.
+     */
     virtual void new_frame() = 0;
+
+    /**
+     * @brief Render the drawn graphics.
+     */
     virtual void render() = 0;
+
+    /**
+     * @brief Check if V-Sync is enabled.
+     * @return true V-Sync is enabled.
+     * @return false V-Sync is disabled.
+     */
+    virtual bool is_vsync_enabled() = 0;
 };
 
 /*****************************************************************************/

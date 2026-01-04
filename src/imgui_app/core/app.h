@@ -93,6 +93,16 @@ class App
      * @brief Check and handle events.
      */
     void handle_events();
+
+    /**
+     * @brief Update Application data.
+     */
+    void data_update();
+
+    /**
+     * @brief Run application internal logic behaviour.
+     */
+    void behaviour();
 };
 
 /*****************************************************************************/
