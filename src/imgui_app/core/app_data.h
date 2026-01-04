@@ -61,7 +61,7 @@ struct AppState
 {
     /* Data Types */
 
-    enum class e_theme : uint32_t { DARK, LIGHT, CLASSIC, CUSTOM, NUM_THEMES };
+    enum class e_theme : uint32_t { DARK, LIGHT, CLASSIC, NUM_THEMES };
     static constexpr uint32_t NUM_THEMES =
         static_cast<uint32_t>(e_theme::NUM_THEMES);
 
@@ -78,7 +78,7 @@ struct AppState
     int window_height = 0;
     e_theme theme = e_theme::DARK;
     std::string str_theme = "Undefined";
-    std::string footbar_project_info = "Undefined";
+    std::string footbar_right_text = "Undefined";
     ImFont* font_default = nullptr;
     ImFont* font_h1 = nullptr;
     ImFont* font_h2 = nullptr;
@@ -113,7 +113,6 @@ struct AppState
             case e_theme::DARK:    str_theme = "Dark";      break;
             case e_theme::LIGHT:   str_theme = "Light";     break;
             case e_theme::CLASSIC: str_theme = "Classic";   break;
-            case e_theme::CUSTOM:  str_theme = "Custom";    break;
             default:               str_theme = "Undefined"; break;
         }
 

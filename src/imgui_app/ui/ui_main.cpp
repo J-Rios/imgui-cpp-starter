@@ -67,8 +67,14 @@ void MainUI::draw()
     state.window_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
     state.window_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
 
-    draw_content();
-    draw_footbar();
+    ImGui::BeginGroup();
+        float content_height =
+            static_cast<float>(state.window_height) - state.footbar_height;
+        ImGui::BeginChild("ContentArea", ImVec2(0, content_height));
+            draw_content();
+        ImGui::EndChild();
+        draw_footbar();
+    ImGui::EndGroup();
     draw_exit_popup();
 
     ImGui::End();
@@ -153,6 +159,45 @@ void MainUI::draw_content()
 
 /*****************************************************************************/
 
+/* Private Methods - Draw Footbar */
+
+void MainUI::draw_footbar()
+{
+    ImGui::PushStyleColor(ImGuiCol_ChildBg, state.color_footbar_bg);
+    ImGui::BeginChild("footbar",
+        ImVec2(0, state.footbar_height),
+        false,
+        ImGuiWindowFlags_NoScrollbar);
+
+    float pad = 10.0f;
+    float y = ImGui::GetCursorPosY() + 2.5f;
+    float w = ImGui::GetWindowWidth();
+
+    // Text: Status
+    ImGui::SetCursorPos(ImVec2(pad, y));
+    ImGui::Text("Status: %s", state.status.c_str());
+
+    // Text: Project Info
+    state.footbar_right_text =
+        std::string(context.project_info->PROJECT_VERSION);
+    bool show_fps = false;
+    if (show_fps)
+    {
+        char fps[32];
+        snprintf(fps, sizeof(fps), "FPS: %.1f", state.fps);
+        state.footbar_right_text = state.footbar_right_text + " | " + fps;
+    }
+    const char* text = state.footbar_right_text.c_str();
+    float text_w = ImGui::CalcTextSize(text).x;
+    ImGui::SetCursorPos(ImVec2(w - text_w - pad, y));
+    ImGui::Text("%s", text);
+
+    ImGui::EndChild();
+    ImGui::PopStyleColor();
+}
+
+/*****************************************************************************/
+
 /* Private Methods - Draw Exit Pop-Up */
 
 void MainUI::draw_exit_popup()
@@ -172,8 +217,10 @@ void MainUI::draw_exit_popup()
         ImVec2(0.5f, 0.5f)
     );
 
+    static constexpr float popup_width = 420.0f;
+    static constexpr float popup_height = 120.0f;
     ImGui::SetNextWindowSize(
-        ImVec2(420, 180),
+        ImVec2(popup_width, popup_height),
         ImGuiCond_Always
     );
 
@@ -235,9 +282,6 @@ void MainUI::change_theme()
             break;
         case e_theme::CLASSIC:
             ImGui::StyleColorsClassic();
-            break;
-        case e_theme::CUSTOM:
-            ImGui::StyleColorsDark();  // Unimplemented (using Dark again)
             break;
         default:
             break;
