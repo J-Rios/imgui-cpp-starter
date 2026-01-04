@@ -86,6 +86,11 @@ class MainUI : public IUI
     void draw_content();
 
     /**
+     * @brief Draw the exit pop-up window.
+     */
+    void draw_exit_popup();
+
+    /**
      * @brief Change UI Theme.
      */
     void change_theme();

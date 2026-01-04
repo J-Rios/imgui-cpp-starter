@@ -151,6 +151,72 @@ void MainUI::draw_content()
     ImGui::EndChild();
 }
 
+/*****************************************************************************/
+
+/* Private Methods - Draw Exit Pop-Up */
+
+void MainUI::draw_exit_popup()
+{
+    ImGuiIO& io = *(context.io);
+
+    if (state.exit_request)
+    {
+        state.exit_request = false;
+        ImGui::OpenPopup("exit_popup");
+    }
+
+    // Center pop-up
+    ImGui::SetNextWindowPos(
+        ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
+        ImGuiCond_Always,
+        ImVec2(0.5f, 0.5f)
+    );
+
+    ImGui::SetNextWindowSize(
+        ImVec2(420, 180),
+        ImGuiCond_Always
+    );
+
+    ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoSavedSettings;
+
+    if (ImGui::BeginPopupModal("exit_popup", nullptr, flags))
+    {
+        // Text: Exit the App?
+        ImGui::Dummy(ImVec2(0, 10));
+        //ImGui::PushFont(state.font_h2);
+        const char* title = "Exit the App?";
+        float text_width = ImGui::CalcTextSize(title).x;
+        ImGui::SetCursorPosX(
+            (ImGui::GetContentRegionAvail().x - text_width) * 0.5f
+        );
+        ImGui::TextUnformatted(title);
+        //ImGui::PopFont();
+
+        // Button: Exit
+        const ImVec2 button_size(120.0f, 30.0f);
+        float spacing = 20.0f;
+        float total = button_size.x * 2 + spacing;
+        ImGui::Dummy(ImVec2(0, 20));
+        ImGui::SetCursorPosX((ImGui::GetWindowWidth() - total) * 0.5f);
+        if (ImGui::Button("Exit", button_size))
+        {
+            state.running = false;
+            ImGui::CloseCurrentPopup();
+        }
+
+        // Button: Cancel
+        ImGui::SameLine(0, spacing);
+        if (ImGui::Button("Cancel", button_size))
+        {   ImGui::CloseCurrentPopup();   }
+
+        ImGui::EndPopup();
+    }
+}
+
 void MainUI::change_theme()
 {
     using e_theme = AppState::e_theme;
