@@ -50,6 +50,11 @@ class MainUI : public IUI
         context{app_context}, state{app_state} {}
 
     /**
+     * @brief Setup the main UI.
+     */
+    void setup() override;
+
+    /**
      * @brief Draw the main UI.
      * @param ctx Application data context.
      */
@@ -70,6 +75,20 @@ class MainUI : public IUI
      * @brief Reference to Application State Data.
      */
     AppState& state;
+
+    /*************************************************************************/
+
+    /* Private Methods */
+
+    /**
+     * @brief Draw Main UI Content region.
+     */
+    void draw_content();
+
+    /**
+     * @brief Change UI Theme.
+     */
+    void change_theme();
 };
 
 /*****************************************************************************/

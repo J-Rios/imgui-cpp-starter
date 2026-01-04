@@ -60,6 +60,8 @@ void App::setup_ui()
 
 void App::draw_ui()
 {
+    state.vsync_enabled = context.backend->is_vsync_enabled();
+
     context.backend->new_frame();
     context.ui->draw();
     context.backend->render();

@@ -28,6 +28,11 @@
 struct IUI
 {
     /**
+     * @brief Setup the UI.
+     */
+    virtual void setup() = 0;
+
+    /**
      * @brief Draw the UI.
      */
     virtual void draw() = 0;
