@@ -37,10 +37,74 @@ void MainUI::setup()
     context.io = &(ImGui::GetIO());
     context.style = &(ImGui::GetStyle());
 
+    // context.io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    // context.io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    // context.io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    // Default Font setup
+    const float default_font_size = 18.0f;
+    ImFontConfig font_cfg;
+    font_cfg.SizePixels = default_font_size;
+    font_cfg.OversampleH = 3;
+    font_cfg.OversampleV = 3;
     if (!state.font_default)
     {
         state.font_default = context.io->Fonts->AddFontDefault();
         context.io->FontDefault = state.font_default;
+    }
+
+    // Load Custom Fonts
+    #if 0
+    float font_size = 14.0f;
+    std::filesystem::path font;
+    std::filesystem::path program_dir = getProgramDirectory();
+    if (!state.font_default)
+    {
+        // Default Font
+        #if 0 // Custom font disabled
+            font = program_dir / "fonts" / "FreeMono.ttf";
+            font_size = 18.0f;
+            state.font_default =
+                context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
+        #endif
+        if (!state.font_default)
+        {
+            state.font_default = context.io->Fonts->AddFontDefault();
+        }
+        context.io->FontDefault = state.font_default;
+    }
+    if (!state.font_h1)
+    {
+        // Header 1 Font
+        font = program_dir / "fonts" / "FreeMono.ttf";
+        font_size = 36.0f;
+        state.font_h1 =
+            context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
+    }
+    if (!state.font_h2)
+    {
+        // Header 2 Font
+        font = program_dir / "fonts" / "FreeMono.ttf";
+        font_size = 32.0f;
+        state.font_h2 =
+            context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
+    }
+    if (!state.font_h3)
+    {
+        // Header 3 Font
+        font = program_dir / "fonts" / "FreeMono.ttf";
+        font_size = 24.0f;
+        state.font_h3 =
+            context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
+    }
+    #endif
+
+    // When viewports are enabled we tweak WindowRounding/WindowBg so
+    // platform windows can look identical to regular ones.
+    if (context.io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        context.style->WindowRounding = 0.0f;
+        context.style->Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 }
 

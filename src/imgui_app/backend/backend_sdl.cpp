@@ -207,14 +207,10 @@ bool BackendSDL::imgui_init() const
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-
     ImGuiIO& io = ImGui::GetIO();
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();  // ImGui::StyleColorsLight();
+    // Setup default Dear ImGui theme style
+    ImGui::StyleColorsDark();
 
     // Setup DPI Scaling
     ImGuiStyle& style = ImGui::GetStyle();
@@ -223,80 +219,12 @@ bool BackendSDL::imgui_init() const
     io.ConfigDpiScaleFonts = true;
     io.ConfigDpiScaleViewports = true;
 
-    // Default Font setup
-    const float default_font_size = 18.0f;
-    ImFontConfig font_cfg;
-    font_cfg.SizePixels = default_font_size;
-    font_cfg.OversampleH = 3;
-    font_cfg.OversampleV = 3;
-
-    // Load Custom Fonts
-    #if 1
-    #elif 2
-    if (!state.font_default)
-    {
-        state.font_default = io.Fonts->AddFontDefault();
-        io.FontDefault = state.font_default;
-    }
-    #else  // Custom Fonts disabled
-    float font_size = 14.0f;
-    std::filesystem::path font;
-    std::filesystem::path program_dir = getProgramDirectory();
-    if (!state.font_default)
-    {
-        // Default Font
-        #if 0 // Custom font disabled
-            font = program_dir / "fonts" / "FreeMono.ttf";
-            font_size = 18.0f;
-            state.font_default =
-                io.Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-        #endif
-        if (!state.font_default)
-        {
-            state.font_default = io.Fonts->AddFontDefault();
-        }
-        io.FontDefault = state.font_default;
-    }
-    if (!state.font_h1)
-    {
-        // Header 1 Font
-        font = program_dir / "fonts" / "FreeMono.ttf";
-        font_size = 36.0f;
-        state.font_h1 =
-            io.Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-    }
-    if (!state.font_h2)
-    {
-        // Header 2 Font
-        font = program_dir / "fonts" / "FreeMono.ttf";
-        font_size = 32.0f;
-        state.font_h2 =
-            io.Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-    }
-    if (!state.font_h3)
-    {
-        // Header 3 Font
-        font = program_dir / "fonts" / "FreeMono.ttf";
-        font_size = 24.0f;
-        state.font_h3 =
-            io.Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-    }
-    #endif
-
-    // When viewports are enabled we tweak WindowRounding/WindowBg so
-    // platform windows can look identical to regular ones.
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
-
+    // Init ImGui SDL+OpenGL backend
     if (!ImGui_ImplSDL2_InitForOpenGL(window, gl_context))
     {
         std::printf("Error: Fail to initialize Imgui\n");
         return false;
     }
-
     if (!ImGui_ImplOpenGL3_Init("#version 130"))
     {
         std::printf("Error: Fail to use OpenGl with Imgui\n");

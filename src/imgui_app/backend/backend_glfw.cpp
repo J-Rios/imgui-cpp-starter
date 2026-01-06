@@ -216,11 +216,10 @@ bool BackendGLFW::imgui_init() const
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-
     ImGuiIO& io = ImGui::GetIO();
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    // Setup default Dear ImGui theme style
+    ImGui::StyleColorsDark();
 
     // Fix GLFW UI sizes
     int fb_w, fb_h;
@@ -233,9 +232,6 @@ bool BackendGLFW::imgui_init() const
         static_cast<float>(fb_h / win_h)
     );
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();  // ImGui::StyleColorsLight();
-
     // Setup DPI Scaling
     ImGuiStyle& style = ImGui::GetStyle();
     float xscale = 1.0f, yscale = 1.0f;
@@ -246,44 +242,6 @@ bool BackendGLFW::imgui_init() const
     style.ScaleAllSizes(main_scale);
     io.ConfigDpiScaleFonts     = true;
     io.ConfigDpiScaleViewports = true;
-
-    // Default Font setup
-    const float default_font_size = 18.0f * main_scale;
-    ImFontConfig font_cfg;
-    font_cfg.SizePixels = default_font_size;
-    font_cfg.OversampleH = 3;
-    font_cfg.OversampleV = 3;
-
-    // Load Custom Fonts
-#if 1
-#elif 2
-    if (!state.font_default)
-    {
-        state.font_default = io.Fonts->AddFontDefault(&font_cfg);
-        io.FontDefault = state.font_default;
-    }
-#else  // Custom Fonts disabled
-    if (!state.font_default)
-    {
-        state.font_default =
-            io.Fonts->AddFontFromFileTTF(
-                "fonts/FreeMono.ttf",
-                18.0f * main_scale,
-                &font_cfg
-            );
-        if (!state.font_default)
-            state.font_default = io.Fonts->AddFontDefault(&font_cfg);
-
-        io.FontDefault = state.font_default;
-    }
-#endif
-
-    // Viewports tweaks
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
 
     // Init ImGui GLFW+OpenGL backend
     if (!ImGui_ImplGlfw_InitForOpenGL(window, true))
