@@ -93,15 +93,19 @@ class BackendGLFW : public IBackend
     private:
 
     /**
-     * @brief Initialize SDL and Create the Main Window.
+     * @brief Initialize GLFW and Create the Main Window.
      * @param title Window title.
      * @param width Window width.
      * @param height Window height.
+     * @param maximized Start window maximized.
+     * @param min_width Minimum window width (not always supported).
+     * @param min_height Minimum window width (not always supported).
      * @return true Initialization success.
      * @return false Initialization fail.
      */
-    bool window_init(const char* title, int width=0,
-        int height=0, const bool maximized=false);
+    bool window_init(const char* title, int width=0, int height=0,
+        const bool maximized=false, const int min_width=360,
+        const int min_height=240);
 
     /**
      * @brief Initialize OpenGL.

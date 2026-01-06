@@ -116,7 +116,7 @@ bool BackendSDL::is_vsync_enabled()
 /* Private Methods */
 
 bool BackendSDL::window_init(const char* title, int width, int height,
-    const bool maximized)
+    const bool maximized, const int min_width, const int min_height)
 {
     // Initialize SDL
     bool fail = false;
@@ -173,7 +173,7 @@ bool BackendSDL::window_init(const char* title, int width, int height,
     }
 
     // Set minimum window size (note: no all OS support this)
-    SDL_SetWindowMinimumSize(window, width, height);
+    SDL_SetWindowMinimumSize(window, min_width, min_height);
 
     return true;
 }

@@ -123,7 +123,7 @@ bool BackendGLFW::is_vsync_enabled()
 /* Private Methods */
 
 bool BackendGLFW::window_init(const char* title, int width, int height,
-    const bool maximized)
+    const bool maximized, const int min_width, const int min_height)
 {
     // Initialize GLFW
     glfwSetErrorCallback(glfw_error_callback);
@@ -186,8 +186,8 @@ bool BackendGLFW::window_init(const char* title, int width, int height,
         glfwSetWindowPos(window, xpos, ypos);
     }
 
-    // Set minimum window size (note: no all OS support this)
-    glfwSetWindowSizeLimits(window, width, height,
+    // Set minimum window size (note: not all backends/OS support this)
+    glfwSetWindowSizeLimits(window, min_width, min_height,
         GLFW_DONT_CARE, GLFW_DONT_CARE);
 
     // Make context current
