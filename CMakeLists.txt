@@ -286,14 +286,12 @@ add_custom_command(
 # Add Windows DLL libraries to output directory
 if(NOT BUILD_STATIC)
     if(TARGET_PLATFORM STREQUAL "Mingw" OR TARGET_PLATFORM STREQUAL "Windows")
-        if(CMAKE_BUILD_TYPE MATCHES Release)
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>" "${DIR_OUT_BIN}/"
-                COMMAND_EXPAND_LISTS
-                COMMENT "Copying project runtime DLLs libs to output directory"
-            )
-        endif()
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "$<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>" "${DIR_OUT_BIN}/"
+            COMMAND_EXPAND_LISTS
+            COMMENT "Copying project runtime DLLs libs to output directory"
+        )
     endif()
     if(TARGET_PLATFORM STREQUAL "Mingw")
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
