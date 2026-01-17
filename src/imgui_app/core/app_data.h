@@ -74,12 +74,15 @@ struct AppState
     const ImVec4 color_footbar_bg{0.13f, 0.47f, 0.82f, 1.0f};
 
     // UI: Data
+    int full_window_width = 0;
+    int full_window_height = 0;
     int window_width = 0;
     int window_height = 0;
     e_theme theme = e_theme::DARK;
     std::string str_theme = "Undefined";
     std::string footbar_right_text = "Undefined";
     ImFont* font_default = nullptr;
+    ImFont* font_text = nullptr;
     ImFont* font_h1 = nullptr;
     ImFont* font_h2 = nullptr;
     ImFont* font_h3 = nullptr;
@@ -95,7 +98,7 @@ struct AppState
     bool connect_requested = false;
     bool disconnect_requested = false;
     bool exit_request = false;
-    bool show_exit_popup = false;
+    bool about_request = false;
 
     // Logic: State
     bool running = true;

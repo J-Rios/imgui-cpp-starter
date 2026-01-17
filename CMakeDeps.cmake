@@ -10,8 +10,10 @@ message(STATUS "Get/Update project dependencies, please wait...")
 include(FetchContent)
 
 # Setup Project Dependecies Fetch Path variables
-set(DIR_DEPS_LIB ${CMAKE_SOURCE_DIR}/deps/libraries)
-set(DIR_DEPS_TOOL ${CMAKE_SOURCE_DIR}/deps/tools)
+set(DIR_DEPS ${CMAKE_SOURCE_DIR}/deps)
+set(DIR_DEPS_LIB ${DIR_DEPS}/libraries)
+set(DIR_DEPS_TOOL ${DIR_DEPS}/tools)
+set(DIR_DEPS_FONTS ${DIR_DEPS}/fonts)
 
 ###############################################################################
 
@@ -124,10 +126,21 @@ target_link_libraries(imgui PUBLIC ${IMGUI_LINK})
 
 ###############################################################################
 
-### Libraries To Fetch - ... ###
+### Fonts To Fetch - FreeFont ###
+
+FetchContent_Declare(
+    freefont
+    URL http://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip
+    SOURCE_DIR ${DIR_DEPS_FONTS}/freefont
+)
+FetchContent_MakeAvailable(freefont)
+
+###############################################################################
+
+### Assets To Fetch - ... ###
 
 #
-# Add Here More Libraries...
+# Add here assets...
 # ...
 
 ###############################################################################
@@ -135,7 +148,7 @@ target_link_libraries(imgui PUBLIC ${IMGUI_LINK})
 ### Tools To Fetch - ... ###
 
 #
-# Add Here More Tools...
+# Add Here tools...
 # ...
 
 ###############################################################################

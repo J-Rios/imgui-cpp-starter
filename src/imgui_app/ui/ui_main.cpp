@@ -15,8 +15,26 @@
 // Class Header
 #include "ui_main.h"
 
+// Standard Libraries
+// ...
+
 // Imgui Libraries
 #include "imgui.h"
+
+/*****************************************************************************/
+
+/* Fonts Data */
+
+// Notes:
+// - These font data comes from linked fonts library (at CMake)
+// - You can check the symbol names of .o files via "nm build/fonts/font.o"
+
+// Free Monospace Font
+extern "C" { extern const unsigned char _binary_FreeMono_ttf_start[]; }
+extern "C" { extern const unsigned char _binary_FreeMono_ttf_end[]; }
+inline const uint8_t* FONT_FREEMONO = _binary_FreeMono_ttf_start;
+inline const size_t FONT_FREEMONO_SIZE =
+    static_cast<size_t>(_binary_FreeMono_ttf_end - _binary_FreeMono_ttf_start);
 
 /*****************************************************************************/
 
@@ -54,50 +72,16 @@ void MainUI::setup()
     }
 
     // Load Custom Fonts
-    #if 0
-    float font_size = 14.0f;
-    std::filesystem::path font;
-    std::filesystem::path program_dir = getProgramDirectory();
-    if (!state.font_default)
-    {
-        // Default Font
-        #if 0 // Custom font disabled
-            font = program_dir / "fonts" / "FreeMono.ttf";
-            font_size = 18.0f;
-            state.font_default =
-                context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-        #endif
-        if (!state.font_default)
-        {
-            state.font_default = context.io->Fonts->AddFontDefault();
-        }
-        context.io->FontDefault = state.font_default;
-    }
     if (!state.font_h1)
-    {
-        // Header 1 Font
-        font = program_dir / "fonts" / "FreeMono.ttf";
-        font_size = 36.0f;
-        state.font_h1 =
-            context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-    }
+    {   state.font_h1 = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 32.0f);   }
     if (!state.font_h2)
-    {
-        // Header 2 Font
-        font = program_dir / "fonts" / "FreeMono.ttf";
-        font_size = 32.0f;
-        state.font_h2 =
-            context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
-    }
+    {   state.font_h2 = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 24.0f);   }
     if (!state.font_h3)
+    {   state.font_h3 = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 18.0f);   }
+    if(!state.font_text)
     {
-        // Header 3 Font
-        font = program_dir / "fonts" / "FreeMono.ttf";
-        font_size = 24.0f;
-        state.font_h3 =
-            context.io->Fonts->AddFontFromFileTTF(font.string().c_str(), font_size);
+        state.font_text = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 14.0f);
     }
-    #endif
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so
     // platform windows can look identical to regular ones.
@@ -118,18 +102,43 @@ void MainUI::draw()
     // Get current used Imgui style
     context.style = &(ImGui::GetStyle());
 
-    ImGui::PushFont(state.font_default);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushFont(state.font_text);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(context.io->DisplaySize);
     ImGui::Begin("Main", nullptr,
-        //ImGuiWindowFlags_NoDecoration |  // Uncomment this to hide top bar
+        ImGuiWindowFlags_NoDecoration |
         ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoResize);
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_MenuBar
+    );
 
-    // Get current window size
+    // Window Menu Bar
+    if (ImGui::BeginMenuBar())
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Exit", "Alt+F4"))
+            {   state.exit_request = true;   }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Help"))
+        {
+            if (ImGui::MenuItem("About"))
+            {   state.about_request = true;   }
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
+
+    // Get current Imgui main window size
+    state.full_window_width = static_cast<int>(ImGui::GetIO().DisplaySize.x);
+    state.full_window_height = static_cast<int>(ImGui::GetIO().DisplaySize.y);
     state.window_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
     state.window_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
     ImGui::BeginGroup();
         float content_height =
@@ -141,9 +150,21 @@ void MainUI::draw()
     ImGui::EndGroup();
     draw_exit_popup();
 
-    ImGui::End();
     ImGui::PopStyleVar();
+    ImGui::End();
     ImGui::PopFont();
+}
+
+/*****************************************************************************/
+
+/* Private Methods - Setup */
+
+ImFont* MainUI::add_font(const uint8_t* data, const size_t data_len,
+    const float size)
+{
+    void* ptr_data = const_cast<void*>(static_cast<const void*>(data));
+    int _data_len = static_cast<int>(data_len);
+    return context.io->Fonts->AddFontFromMemoryTTF(ptr_data, _data_len, size);
 }
 
 /*****************************************************************************/
@@ -164,6 +185,16 @@ void MainUI::draw_content()
     ImGui::Indent(margin_x);
 
     /***********************/
+
+    // Text: Title
+    ImGui::PushFont(state.font_h2);
+    ImGui::Text("ImGui C++ Starter");
+    ImGui::PopFont();
+
+    // Separator
+    ImGui::Dummy(ImVec2(0, 10));
+    ImGui::Separator();
+    ImGui::Dummy(ImVec2(0, 10));
 
     // Button: Connect
     if (ImGui::Button("Connect"))
@@ -196,7 +227,7 @@ void MainUI::draw_content()
 
     // Text: Window Width & Heigth
     ImGui::Text("Window Size: %d x %d",
-        state.window_width, state.window_height);
+        state.full_window_width, state.full_window_height);
 
     // Separator
     ImGui::Dummy(ImVec2(0, 10));
@@ -282,7 +313,7 @@ void MainUI::draw_exit_popup()
     );
 
     static constexpr float popup_width = 420.0f;
-    static constexpr float popup_height = 120.0f;
+    static constexpr float popup_height = 130.0f;
     ImGui::SetNextWindowSize(
         ImVec2(popup_width, popup_height),
         ImGuiCond_Always
@@ -298,14 +329,14 @@ void MainUI::draw_exit_popup()
     {
         // Text: Exit the App?
         ImGui::Dummy(ImVec2(0, 10));
-        //ImGui::PushFont(state.font_h2);
-        const char* title = "Exit the App?";
+        ImGui::PushFont(state.font_h2);
+        const char* title = "Quit App?";
         float text_width = ImGui::CalcTextSize(title).x;
         ImGui::SetCursorPosX(
             (ImGui::GetContentRegionAvail().x - text_width) * 0.5f
         );
         ImGui::TextUnformatted(title);
-        //ImGui::PopFont();
+        ImGui::PopFont();
 
         // Button: Exit
         const ImVec2 button_size(120.0f, 30.0f);

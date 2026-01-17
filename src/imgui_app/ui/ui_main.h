@@ -81,6 +81,15 @@ class MainUI : public IUI
     /* Private Methods */
 
     /**
+     * @brief Add a Font to be used by the Application.
+     * @param data Font data.
+     * @param data_len Number of bytes of font data.
+     * @param size Font text size.
+     */
+    ImFont* add_font(const uint8_t* data, const size_t data_len,
+        const float size);
+
+    /**
      * @brief Draw Main UI Content region.
      */
     void draw_content();

@@ -25,6 +25,7 @@ target_sources(imgui_app
 )
 
 target_link_libraries(imgui_app
+    assets_font
     imgui
     project_info
 )

@@ -188,6 +188,45 @@ include(CMakeDeps.cmake)
 
 ###############################################################################
 
+### Fonts Assets Build ###
+
+# The defined *.ttf fonts will be built into *.o files. Then, a CMake library
+# (assets_font) is define for all these files to be linked and embedded into
+# the project output target binary
+
+# Define and create fonts build directory
+set(DIR_FONT_OBJECTS ${DIR_BUILD}/fonts)
+file(MAKE_DIRECTORY ${DIR_FONT_OBJECTS})
+
+# Set fonts to build
+set(FILES_FONT_TTF
+    ${DIR_DEPS_FONTS}/freefont/FreeMono.ttf
+    # ...
+)
+
+# Build Fonts
+set(FONT_OBJECTS)
+foreach(TTF_FILE ${FILES_FONT_TTF})
+    get_filename_component(FONT_NAME ${TTF_FILE} NAME_WE)
+    set(OBJ_FILE ${DIR_FONT_OBJECTS}/${FONT_NAME}.o)
+    set(FONT_LOCAL ${DIR_FONT_OBJECTS}/${FONT_NAME}.ttf)
+    add_custom_command(
+        DEPENDS ${TTF_FILE}
+        OUTPUT ${OBJ_FILE}
+        WORKING_DIRECTORY ${DIR_FONT_OBJECTS}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${TTF_FILE} ${FONT_LOCAL}
+        COMMAND ${CMAKE_LINKER} -r -b binary ${FONT_NAME}.ttf -o ${OBJ_FILE}
+        COMMENT "Embedding font ${FONT_NAME}.ttf"
+    )
+    list(APPEND FONT_OBJECTS ${OBJ_FILE})
+endforeach()
+
+# Set built fonts as library
+add_library(assets_font STATIC ${FONT_OBJECTS})
+set_target_properties(assets_font PROPERTIES LINKER_LANGUAGE C)
+
+###############################################################################
+
 ### Build Target ###
 
 # Sources files
@@ -212,6 +251,7 @@ add_subdirectory(src/project_info)
 
 # Libraries for linkage (-lLIBRARY)
 target_link_libraries(${PROJECT_NAME}
+    assets_font
     imgui
     imgui_app
     imgui_demo
@@ -278,6 +318,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:${PROJECT_NAME}>"
         "${DIR_OUT_BIN}/"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DIR_ASSETS}"
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_BUILD}/"
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_OUT_BIN}/"
     COMMENT "Copying output binary and assets to debug/ and bin/ directories"
