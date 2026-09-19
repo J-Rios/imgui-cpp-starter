@@ -1,0 +1,113 @@
+
+### Fonts Assets Build Process ###
+
+# This process builds the required project fonts by embedding them into object
+# files that are then linked and added to the project as an "assets_font"
+# library, so the fonts are available in the final program binary.
+# Additionally, a C/C++ header file is automatically generated to provide the
+# different labels to access them.
+
+###############################################################################
+
+### Fonts Build ###
+
+# Define and create fonts build directory
+set(DIR_FONT_OBJECTS "${DIR_BUILD}/fonts")
+file(MAKE_DIRECTORY "${DIR_FONT_OBJECTS}")
+
+# Set fonts to build
+file(GLOB FILES_FONT
+    "${DIR_DEPS_FONTS}/nk57/*.otf"
+)
+
+# Build fonts
+set(FONT_OBJECTS)
+foreach(FONT_FILE IN LISTS FILES_FONT)
+    get_filename_component(FONT_FILENAME "${FONT_FILE}" NAME_WE)
+    get_filename_component(FONT_EXT "${FONT_FILE}" EXT)
+    string(MAKE_C_IDENTIFIER "${FONT_FILENAME}${FONT_EXT}" FONT_NAME)
+
+    message(STATUS "Adding font file: \"${FONT_NAME}\"")
+
+    set(OBJ_FILE "${DIR_FONT_OBJECTS}/${FONT_NAME}.o")
+    set(FONT_LOCAL "${DIR_FONT_OBJECTS}/${FONT_NAME}")
+
+    add_custom_command(
+        OUTPUT "${OBJ_FILE}"
+        DEPENDS "${FONT_FILE}"
+        WORKING_DIRECTORY "${DIR_FONT_OBJECTS}"
+
+        COMMAND ${CMAKE_COMMAND}
+                -E copy_if_different "${FONT_FILE}" "${FONT_LOCAL}"
+
+        COMMAND ${CMAKE_LINKER}
+                -r -b binary "${FONT_NAME}" -o "${OBJ_FILE}"
+
+        COMMAND ${CMAKE_OBJCOPY}
+                --strip-symbol=_binary_${FONT_NAME}_size "${OBJ_FILE}"
+
+        COMMENT "Embedding font ${FONT_NAME}"
+    )
+
+    list(APPEND FONT_OBJECTS "${OBJ_FILE}")
+endforeach()
+
+# Set built fonts as library
+add_library(assets_font STATIC ${FONT_OBJECTS})
+set_target_properties(assets_font PROPERTIES LINKER_LANGUAGE C)
+
+###############################################################################
+
+### Generate C/C++ Header File ###
+
+# Create assets directory if it doesn't exist
+set(DIR_ASSETS_SRC ${DIR_SRC}/assets)
+file(MAKE_DIRECTORY "${DIR_ASSETS_SRC}")
+
+# Font header file path
+set(FILE_FONT_HEADER "${DIR_ASSETS_SRC}/custom_fonts.h")
+
+# Prepare font header content
+set(FONT_HEADER_CONTENT
+"
+#pragma once
+
+#include <cstddef>
+
+/*****************************************************************************/
+")
+foreach(FONT_FILE IN LISTS FILES_FONT)
+    get_filename_component(FONT_FILENAME "${FONT_FILE}" NAME_WE)
+    get_filename_component(FONT_EXT "${FONT_FILE}" EXT)
+    string(MAKE_C_IDENTIFIER "${FONT_FILENAME}${FONT_EXT}" FONT_NAME)
+    string(APPEND FONT_HEADER_CONTENT
+"
+// ${FONT_NAME}
+extern \"C\"
+{
+    extern const unsigned char _binary_${FONT_NAME}_start[];
+    extern const unsigned char _binary_${FONT_NAME}_end[];
+}
+inline const size_t _binary_${FONT_NAME}_size =
+    static_cast<size_t>(_binary_${FONT_NAME}_end
+                        - _binary_${FONT_NAME}_start);
+")
+endforeach()
+string(APPEND FONT_HEADER_CONTENT
+"
+/*****************************************************************************/
+")
+
+# Create header file
+file(GENERATE
+    OUTPUT "${FILE_FONT_HEADER}"
+    CONTENT "${FONT_HEADER_CONTENT}"
+)
+
+# Include fonts header file directory
+target_include_directories(assets_font
+    PUBLIC
+        "${DIR_ASSETS_SRC}"
+)
+
+###############################################################################

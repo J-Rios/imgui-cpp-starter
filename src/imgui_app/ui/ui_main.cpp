@@ -21,24 +21,20 @@
 // Imgui Libraries
 #include "imgui.h"
 
+// Assets Libraries
+#include "custom_fonts.h"
+
 /*****************************************************************************/
 
 /* Fonts Data */
 
 // Notes:
 // - These font data comes from linked fonts library (at CMake)
-// - You can check the symbol names of .o files via "nm build/fonts/font.o"
+// - You can check the symbol names at custom_fonts.h
 
-// Free Monospace Font
-extern "C"
-{
-    extern const unsigned char _binary_NK57_Monospace_No_Bk_otf_start[];
-    extern const unsigned char _binary_NK57_Monospace_No_Bk_otf_end[];
-}
+// Custom Monospace Font
 inline const uint8_t* MYFONT = _binary_NK57_Monospace_No_Bk_otf_start;
-inline const size_t MYFONT_SIZE =
-    static_cast<size_t>(_binary_NK57_Monospace_No_Bk_otf_end
-                        - _binary_NK57_Monospace_No_Bk_otf_start);
+inline const size_t MYFONT_SIZE = _binary_NK57_Monospace_No_Bk_otf_size;
 
 /*****************************************************************************/
 

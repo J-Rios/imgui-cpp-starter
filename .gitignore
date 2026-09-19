@@ -4,6 +4,7 @@
 bin/
 build/
 deps/
+src/assets
 
 # Files to ignore
 imgui.ini

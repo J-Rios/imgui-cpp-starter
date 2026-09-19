@@ -190,51 +190,7 @@ include(CMakeDeps.cmake)
 
 ### Fonts Assets Build ###
 
-# All font files found in the font directories are embedded into object files.
-# The resulting objects are linked through the assets_font library.
-
-# Define and create fonts build directory
-set(DIR_FONT_OBJECTS "${DIR_BUILD}/fonts")
-file(MAKE_DIRECTORY "${DIR_FONT_OBJECTS}")
-
-# Set fonts to build
-file(GLOB FILES_FONT
-    "${DIR_DEPS_FONTS}/nk57/*.otf"
-)
-
-# Build fonts
-set(FONT_OBJECTS)
-foreach(FONT_FILE IN LISTS FILES_FONT)
-    get_filename_component(FONT_NAME "${FONT_FILE}" NAME_WE)
-    get_filename_component(FONT_EXT "${FONT_FILE}" EXT)
-
-    message(STATUS "Adding font file: ${FONT_NAME}${FONT_EXT}")
-
-    set(OBJ_FILE "${DIR_FONT_OBJECTS}/${FONT_NAME}.o")
-    set(FONT_LOCAL "${DIR_FONT_OBJECTS}/${FONT_NAME}${FONT_EXT}")
-
-    add_custom_command(
-        OUTPUT "${OBJ_FILE}"
-        DEPENDS "${FONT_FILE}"
-        WORKING_DIRECTORY "${DIR_FONT_OBJECTS}"
-
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${FONT_FILE}"
-                "${FONT_LOCAL}"
-
-        COMMAND ${CMAKE_LINKER} -r -b binary
-                "${FONT_NAME}${FONT_EXT}"
-                -o "${OBJ_FILE}"
-
-        COMMENT "Embedding font ${FONT_NAME}${FONT_EXT}"
-    )
-
-    list(APPEND FONT_OBJECTS "${OBJ_FILE}")
-endforeach()
-
-# Set built fonts as library
-add_library(assets_font STATIC ${FONT_OBJECTS})
-set_target_properties(assets_font PROPERTIES LINKER_LANGUAGE C)
+include(build_fonts.cmake)
 
 ###############################################################################
 
