@@ -8,12 +8,12 @@ target_include_directories(imgui_demo
 
 if(IMGUI_BACKEND STREQUAL "SDL")
     target_sources(imgui_demo
-        PUBLIC
+        PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/imgui_demo_sdl.cpp
     )
 else()
     target_sources(imgui_demo
-        PUBLIC
+        PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/imgui_demo_glfw.cpp
     )
 endif()

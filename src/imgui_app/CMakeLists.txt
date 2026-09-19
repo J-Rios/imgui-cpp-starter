@@ -18,7 +18,7 @@ target_include_directories(imgui_app
 )
 
 target_sources(imgui_app
-    PUBLIC
+    PRIVATE
         ${BACKEND_SRC}
         ${CMAKE_CURRENT_LIST_DIR}/core/app.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ui/ui_main.cpp

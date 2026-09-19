@@ -7,7 +7,7 @@ target_include_directories(project_info
 )
 
 target_sources(project_info
-    PUBLIC
+    PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/project_info.cpp
         ${CMAKE_CURRENT_LIST_DIR}/project_info.h
 )
