@@ -33,7 +33,8 @@ App::App(const s_project_info& project_information)
 
 int App::run()
 {
-    setup_ui();
+    if (!setup_ui())
+    {   state.running = false;   }
 
     while (state.running)
     {
@@ -52,10 +53,14 @@ int App::run()
 
 /* Private Methods - UI */
 
-void App::setup_ui()
+bool App::setup_ui()
 {
-    context.backend->init(context.project_info->PROJECT_NAME);
+    if (!context.backend->init(context.project_info->PROJECT_NAME))
+    {   return false;   }
+
     context.ui->setup();
+
+    return true;
 }
 
 void App::draw_ui()

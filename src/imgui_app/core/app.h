@@ -76,8 +76,10 @@ class App
 
     /**
      * @brief Initial configuration of the UI.
+     * @return true Setup success.
+     * @return false Setup fail.
      */
-    void setup_ui();
+    bool setup_ui();
 
     /**
      * @brief Draw and render a new frame of the UI.

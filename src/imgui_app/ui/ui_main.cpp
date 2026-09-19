@@ -30,10 +30,13 @@
 // - You can check the symbol names of .o files via "nm build/fonts/font.o"
 
 // Free Monospace Font
-extern "C" { extern const unsigned char _binary_FreeMono_ttf_start[]; }
-extern "C" { extern const unsigned char _binary_FreeMono_ttf_end[]; }
-inline const uint8_t* FONT_FREEMONO = _binary_FreeMono_ttf_start;
-inline const size_t FONT_FREEMONO_SIZE =
+extern "C"
+{
+    extern const unsigned char _binary_FreeMono_ttf_start[];
+    extern const unsigned char _binary_FreeMono_ttf_end[];
+}
+inline const uint8_t* MYFONT = _binary_FreeMono_ttf_start;
+inline const size_t MYFONT_SIZE =
     static_cast<size_t>(_binary_FreeMono_ttf_end - _binary_FreeMono_ttf_start);
 
 /*****************************************************************************/
@@ -73,14 +76,14 @@ void MainUI::setup()
 
     // Load Custom Fonts
     if (!state.font_h1)
-    {   state.font_h1 = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 32.0f);   }
+    {   state.font_h1 = add_font(MYFONT, MYFONT_SIZE, 32.0f);   }
     if (!state.font_h2)
-    {   state.font_h2 = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 24.0f);   }
+    {   state.font_h2 = add_font(MYFONT, MYFONT_SIZE, 24.0f);   }
     if (!state.font_h3)
-    {   state.font_h3 = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 18.0f);   }
+    {   state.font_h3 = add_font(MYFONT, MYFONT_SIZE, 18.0f);   }
     if(!state.font_text)
     {
-        state.font_text = add_font(FONT_FREEMONO, FONT_FREEMONO_SIZE, 14.0f);
+        state.font_text = add_font(MYFONT, MYFONT_SIZE, 14.0f);
     }
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so
@@ -164,7 +167,12 @@ ImFont* MainUI::add_font(const uint8_t* data, const size_t data_len,
 {
     void* ptr_data = const_cast<void*>(static_cast<const void*>(data));
     int _data_len = static_cast<int>(data_len);
-    return context.io->Fonts->AddFontFromMemoryTTF(ptr_data, _data_len, size);
+
+    ImFontConfig config;
+    config.FontDataOwnedByAtlas = false;
+
+    auto& Fonts = context.io->Fonts;
+    return Fonts->AddFontFromMemoryTTF(ptr_data, _data_len, size, &config);
 }
 
 /*****************************************************************************/

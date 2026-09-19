@@ -67,7 +67,8 @@ void BackendGLFW::shutdown()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    glfwDestroyWindow(window);
+    if (window)
+    {   glfwDestroyWindow(window);   }
     glfwTerminate();
 }
 
