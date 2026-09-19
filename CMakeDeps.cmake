@@ -126,14 +126,16 @@ target_link_libraries(imgui PUBLIC ${IMGUI_LINK})
 
 ###############################################################################
 
-### Fonts To Fetch - FreeFont ###
+### Fonts To Fetch - NK57 ###
 
+message(STATUS "Fetching Font: NK57...")
 FetchContent_Declare(
-    freefont
-    URL http://ftp.gnu.org/gnu/freefont/freefont-ttf-20120503.zip
-    SOURCE_DIR ${DIR_DEPS_FONTS}/freefont
+    nk57
+    GIT_REPOSITORY https://github.com/J-Rios/font-nk57-monospace
+    GIT_TAG v1.0.0
+    SOURCE_DIR ${DIR_DEPS_FONTS}/nk57
 )
-FetchContent_MakeAvailable(freefont)
+FetchContent_MakeAvailable(nk57)
 
 ###############################################################################
 

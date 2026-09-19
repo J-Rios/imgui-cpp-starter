@@ -190,35 +190,46 @@ include(CMakeDeps.cmake)
 
 ### Fonts Assets Build ###
 
-# The defined *.ttf fonts will be built into *.o files. Then, a CMake library
-# (assets_font) is define for all these files to be linked and embedded into
-# the project output target binary
+# All font files found in the font directories are embedded into object files.
+# The resulting objects are linked through the assets_font library.
 
 # Define and create fonts build directory
-set(DIR_FONT_OBJECTS ${DIR_BUILD}/fonts)
-file(MAKE_DIRECTORY ${DIR_FONT_OBJECTS})
+set(DIR_FONT_OBJECTS "${DIR_BUILD}/fonts")
+file(MAKE_DIRECTORY "${DIR_FONT_OBJECTS}")
 
 # Set fonts to build
-set(FILES_FONT_TTF
-    ${DIR_DEPS_FONTS}/freefont/FreeMono.ttf
-    # ...
+file(GLOB FILES_FONT
+    "${DIR_DEPS_FONTS}/nk57/*.otf"
 )
 
-# Build Fonts
+# Build fonts
 set(FONT_OBJECTS)
-foreach(TTF_FILE ${FILES_FONT_TTF})
-    get_filename_component(FONT_NAME ${TTF_FILE} NAME_WE)
-    set(OBJ_FILE ${DIR_FONT_OBJECTS}/${FONT_NAME}.o)
-    set(FONT_LOCAL ${DIR_FONT_OBJECTS}/${FONT_NAME}.ttf)
+foreach(FONT_FILE IN LISTS FILES_FONT)
+    get_filename_component(FONT_NAME "${FONT_FILE}" NAME_WE)
+    get_filename_component(FONT_EXT "${FONT_FILE}" EXT)
+
+    message(STATUS "Adding font file: ${FONT_NAME}${FONT_EXT}")
+
+    set(OBJ_FILE "${DIR_FONT_OBJECTS}/${FONT_NAME}.o")
+    set(FONT_LOCAL "${DIR_FONT_OBJECTS}/${FONT_NAME}${FONT_EXT}")
+
     add_custom_command(
-        DEPENDS ${TTF_FILE}
-        OUTPUT ${OBJ_FILE}
-        WORKING_DIRECTORY ${DIR_FONT_OBJECTS}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${TTF_FILE} ${FONT_LOCAL}
-        COMMAND ${CMAKE_LINKER} -r -b binary ${FONT_NAME}.ttf -o ${OBJ_FILE}
-        COMMENT "Embedding font ${FONT_NAME}.ttf"
+        OUTPUT "${OBJ_FILE}"
+        DEPENDS "${FONT_FILE}"
+        WORKING_DIRECTORY "${DIR_FONT_OBJECTS}"
+
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${FONT_FILE}"
+                "${FONT_LOCAL}"
+
+        COMMAND ${CMAKE_LINKER} -r -b binary
+                "${FONT_NAME}${FONT_EXT}"
+                -o "${OBJ_FILE}"
+
+        COMMENT "Embedding font ${FONT_NAME}${FONT_EXT}"
     )
-    list(APPEND FONT_OBJECTS ${OBJ_FILE})
+
+    list(APPEND FONT_OBJECTS "${OBJ_FILE}")
 endforeach()
 
 # Set built fonts as library

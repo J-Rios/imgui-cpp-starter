@@ -32,12 +32,13 @@
 // Free Monospace Font
 extern "C"
 {
-    extern const unsigned char _binary_FreeMono_ttf_start[];
-    extern const unsigned char _binary_FreeMono_ttf_end[];
+    extern const unsigned char _binary_NK57_Monospace_No_Bk_otf_start[];
+    extern const unsigned char _binary_NK57_Monospace_No_Bk_otf_end[];
 }
-inline const uint8_t* MYFONT = _binary_FreeMono_ttf_start;
+inline const uint8_t* MYFONT = _binary_NK57_Monospace_No_Bk_otf_start;
 inline const size_t MYFONT_SIZE =
-    static_cast<size_t>(_binary_FreeMono_ttf_end - _binary_FreeMono_ttf_start);
+    static_cast<size_t>(_binary_NK57_Monospace_No_Bk_otf_end
+                        - _binary_NK57_Monospace_No_Bk_otf_start);
 
 /*****************************************************************************/
 
