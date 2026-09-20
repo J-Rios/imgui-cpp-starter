@@ -16,7 +16,7 @@
 #include "ui_main.h"
 
 // Standard Libraries
-// ...
+#include <cstring>
 
 // Imgui Libraries
 #include "imgui.h"
@@ -26,7 +26,7 @@
 /* Fonts Configuration */
 
 // Note: font names at custom_fonts.h (_fonts array)
-static constexpr const char* FONT_TO_USE = "NK57_Monospace_No_Bk_otf";
+static constexpr const char* FONT_INIT = "NK57_Monospace_No_Bk_otf";
 
 static constexpr float FONT_H1_SIZE = 32.0f;
 static constexpr float FONT_H2_SIZE = 24.0f;
@@ -49,6 +49,8 @@ IUI* CreateMainUI(AppContext& app_context, AppState& app_state)
 
 void MainUI::setup()
 {
+    AppState::Font font_load;
+
     context.io = &(ImGui::GetIO());
     context.style = &(ImGui::GetStyle());
 
@@ -62,14 +64,12 @@ void MainUI::setup()
     font_cfg.SizePixels = default_font_size;
     font_cfg.OversampleH = 3;
     font_cfg.OversampleV = 3;
-    if (!state.font_default)
-    {
-        state.font_default = context.io->Fonts->AddFontDefault();
-        context.io->FontDefault = state.font_default;
-    }
+    font_load.name = "Default";
+    font_load.type = AppState::e_font_type::TEXT;
+    font_load.imgui = context.io->Fonts->AddFontDefault();
+    context.io->FontDefault = font_load.imgui;
 
     // Load Custom Fonts
-    AppState::Font font_load;
     for (std::size_t i = 0U; i < binary_fonts.count(); ++i)
     {
         s_font_data* font = binary_fonts.get(i);
@@ -97,10 +97,37 @@ void MainUI::setup()
         else
         {   std::printf("Warning: Fail to load font \"%s\"\n", font->name);   }
     }
-    set_font(FONT_TO_USE, AppState::e_font_type::TEXT);
+
+    // Create list of fonts names
+    state.font_names.reserve(state.fonts.size());
+    for (const auto& font : state.fonts)
+    {
+        bool name_already_added = false;
+        for (const char* name : state.font_names)
+        {
+            if (std::strcmp(name, font.name) == 0)
+            {
+                name_already_added = true;
+                break;
+            }
+        }
+
+        if (!name_already_added)
+        {   state.font_names.push_back(font.name);   }
+    }
+
+    // Set initial font to use
+    for (size_t i = 0; i < state.font_names.size(); ++i)
+    {
+        if (std::string(state.font_names[i]) == std::string(FONT_INIT))
+        {
+            state.selected_font = i;
+            break;
+        }
+    }
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so
-    // platform windows can look identical to regular ones.
+    // platform windows can look identical to regular ones
     if (context.io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         context.style->WindowRounding = 0.0f;
@@ -108,13 +135,13 @@ void MainUI::setup()
     }
 }
 
-void MainUI::set_font(const char* name, const AppState::e_font_type type)
+bool MainUI::set_font(const char* name, const AppState::e_font_type type)
 {
     bool font_found = false;
 
     for (const auto& font : state.fonts)
     {
-        if (strcmp(font.name, FONT_TO_USE) != 0)
+        if (strcmp(font.name, name) != 0)
         {   continue;   }
 
         if (font.type != type)
@@ -123,15 +150,20 @@ void MainUI::set_font(const char* name, const AppState::e_font_type type)
         font_found = true;
 
         ImGui::PushFont(font.imgui);
+        return true;
     }
 
     if (!font_found)
     {   std::printf("Warning: Fail to set font \"%s\"\n", name);   }
+
+    return false;
 }
 
 void MainUI::draw()
 {
     /* Main UI Window */
+
+    using e_font_type = AppState::e_font_type;
 
     // Get current FPS
     state.fps = ImGui::GetIO().Framerate;
@@ -139,7 +171,8 @@ void MainUI::draw()
     // Get current used Imgui style
     context.style = &(ImGui::GetStyle());
 
-    set_font(FONT_TO_USE, AppState::e_font_type::TEXT);
+    const bool text_font_pushed = set_font(
+        state.font_names[state.selected_font], e_font_type::TEXT);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(context.io->DisplaySize);
     ImGui::Begin("Main", nullptr,
@@ -189,7 +222,8 @@ void MainUI::draw()
 
     ImGui::PopStyleVar();
     ImGui::End();
-    ImGui::PopFont();
+    if (text_font_pushed)
+    {   ImGui::PopFont();   }
 }
 
 /*****************************************************************************/
@@ -229,9 +263,11 @@ void MainUI::draw_content()
     /***********************/
 
     // Text: Title
-    set_font(FONT_TO_USE, AppState::e_font_type::H2);
+    const bool heading_font_pushed = set_font(
+        state.font_names[state.selected_font], AppState::e_font_type::H2);
     ImGui::Text("ImGui C++ Starter");
-    ImGui::PopFont();
+    if (heading_font_pushed)
+    {   ImGui::PopFont();   }
 
     // Separator
     ImGui::Dummy(ImVec2(0, 10));
@@ -261,6 +297,19 @@ void MainUI::draw_content()
 
     // Text: UI Theme
     ImGui::Text("UI Theme: %s", state.str_theme.c_str());
+
+    // Separator
+    ImGui::Dummy(ImVec2(0, 10));
+    ImGui::Separator();
+    ImGui::Dummy(ImVec2(0, 10));
+
+    // Combobox: Font Selector
+    int new_selection = state.selected_font;
+    int i = 0;
+    ImGui::Combo("Selected Font", &new_selection, state.font_names.data(),
+        static_cast<int>(state.font_names.size()));
+    if (new_selection != state.selected_font)
+    {   state.selected_font = new_selection;   }
 
     // Separator
     ImGui::Dummy(ImVec2(0, 10));
@@ -339,6 +388,7 @@ void MainUI::draw_footbar()
 
 void MainUI::draw_exit_popup()
 {
+    using e_font_type = AppState::e_font_type;
     ImGuiIO& io = *(context.io);
 
     if (state.exit_request)
@@ -371,14 +421,16 @@ void MainUI::draw_exit_popup()
     {
         // Text: Exit the App?
         ImGui::Dummy(ImVec2(0, 10));
-        set_font(FONT_TO_USE, AppState::e_font_type::H2);
+        const bool heading_font_pushed = set_font(
+            state.font_names[state.selected_font], e_font_type::H2);
         const char* title = "Quit App?";
         float text_width = ImGui::CalcTextSize(title).x;
         ImGui::SetCursorPosX(
             (ImGui::GetContentRegionAvail().x - text_width) * 0.5f
         );
         ImGui::TextUnformatted(title);
-        ImGui::PopFont();
+        if (heading_font_pushed)
+        {   ImGui::PopFont();   }
 
         // Button: Exit
         const ImVec2 button_size(120.0f, 30.0f);

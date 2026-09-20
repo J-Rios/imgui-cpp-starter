@@ -93,8 +93,18 @@ class MainUI : public IUI
      * @brief Set the current font to be used.
      * @param name Font name.
      * @param type Font type.
+     * @return true Font set successfully.
+     * @return false Font not found.
      */
-    void set_font(const char* name, const AppState::e_font_type type);
+    bool set_font(const char* name, const AppState::e_font_type type);
+
+    /**
+     * @brief Pop the current font to restore the previous one.
+     * @note This method must be called after set_font() to restore the
+     * previous font. Otherwise, the font stack will be corrupted and the
+     * application will not render text correctly.
+     */
+    void pop_font();
 
     /**
      * @brief Draw Main UI Content region.

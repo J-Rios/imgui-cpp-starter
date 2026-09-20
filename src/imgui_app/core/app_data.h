@@ -107,7 +107,8 @@ struct AppState
     std::string str_theme = "Undefined";
     std::string footbar_right_text = "Undefined";
     std::vector<Font> fonts;
-    ImFont* font_default = nullptr;
+    std::vector<const char*> font_names;
+    int selected_font = 0;
 
     /***************************/
 
@@ -152,6 +153,22 @@ struct AppState
             status = "Disconnected";
             disconnect_requested = false;
         }
+    }
+
+    const char* get_font_name(const int font_id)
+    {
+        return fonts[font_id].name;
+    }
+
+    int get_font_id(const char* name)
+    {
+        for (size_t i = 0; i < fonts.size(); ++i)
+        {
+            if (std::strcmp(fonts[i].name, name) == 0)
+            {   return static_cast<int>(i);   }
+        }
+
+        return 0;
     }
 };
 
