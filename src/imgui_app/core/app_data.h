@@ -23,6 +23,7 @@
 
 // Standard Libraries
 #include <string>
+#include <vector>
 
 // Class Interfaces
 #include "backend_interface.h"
@@ -32,6 +33,7 @@
 #include "imgui.h"
 
 // Auxiliary Libraries
+#include "custom_fonts.h"
 #include "project_info.h"
 
 /*****************************************************************************/
@@ -61,9 +63,32 @@ struct AppState
 {
     /* Data Types */
 
+    /**
+     * UI Themes.
+     */
     enum class e_theme : uint32_t { DARK, LIGHT, CLASSIC, NUM_THEMES };
+
+    /**
+     * Number of UI Themes.
+     */
     static constexpr uint32_t NUM_THEMES =
         static_cast<uint32_t>(e_theme::NUM_THEMES);
+
+    /**
+     * @brief Imgui Font Types.
+     */
+    enum class e_font_type : uint32_t { H1, H2, H3, TEXT, NUM_FONT_TYPES };
+
+    /**
+     * Imgui Font.
+     */
+    struct Font
+    {
+        e_font_type type = e_font_type::TEXT;
+        const char* name = nullptr;
+        s_font_data* bin = nullptr;
+        ImFont* imgui = nullptr;
+    };
 
     /***************************/
 
@@ -81,11 +106,8 @@ struct AppState
     e_theme theme = e_theme::DARK;
     std::string str_theme = "Undefined";
     std::string footbar_right_text = "Undefined";
+    std::vector<Font> fonts;
     ImFont* font_default = nullptr;
-    ImFont* font_text = nullptr;
-    ImFont* font_h1 = nullptr;
-    ImFont* font_h2 = nullptr;
-    ImFont* font_h3 = nullptr;
 
     /***************************/
 

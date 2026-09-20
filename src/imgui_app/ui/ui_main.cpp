@@ -21,15 +21,12 @@
 // Imgui Libraries
 #include "imgui.h"
 
-// Assets Libraries
-#include "custom_fonts.h"
-
 /*****************************************************************************/
 
 /* Fonts Configuration */
 
 // Note: font names at custom_fonts.h (_fonts array)
-static constexpr const char* DEFAULT_FONT = "NK57_Monospace_No_Bk_otf";
+static constexpr const char* FONT_TO_USE = "NK57_Monospace_No_Bk_otf";
 
 static constexpr float FONT_H1_SIZE = 32.0f;
 static constexpr float FONT_H2_SIZE = 24.0f;
@@ -72,22 +69,35 @@ void MainUI::setup()
     }
 
     // Load Custom Fonts
-    s_font_data* font = binary_fonts.get(DEFAULT_FONT);
-    if (font)
+    AppState::Font font_load;
+    for (std::size_t i = 0U; i < binary_fonts.count(); ++i)
     {
-        if (!state.font_h1)
-        {   state.font_h1 = add_font(font->data, font->size, FONT_H1_SIZE);   }
-        if (!state.font_h2)
-        {   state.font_h2 = add_font(font->data, font->size, FONT_H2_SIZE);   }
-        if (!state.font_h3)
-        {   state.font_h3 = add_font(font->data, font->size, FONT_H3_SIZE);   }
-        if (!state.font_text)
+        s_font_data* font = binary_fonts.get(i);
+        if (font)
         {
-            state.font_text = add_font(font->data, font->size, FONT_TEXT_SIZE);
+            font_load.bin = font;
+            font_load.name = font->name;
+
+            font_load.type = AppState::e_font_type::H1;
+            font_load.imgui = add_font(font->data, font->size, FONT_H1_SIZE);
+            state.fonts.emplace_back(font_load);
+
+            font_load.type = AppState::e_font_type::H2;
+            font_load.imgui = add_font(font->data, font->size, FONT_H2_SIZE);
+            state.fonts.emplace_back(font_load);
+
+            font_load.type = AppState::e_font_type::H3;
+            font_load.imgui = add_font(font->data, font->size, FONT_H3_SIZE);
+            state.fonts.emplace_back(font_load);
+
+            font_load.type = AppState::e_font_type::TEXT;
+            font_load.imgui = add_font(font->data, font->size, FONT_TEXT_SIZE);
+            state.fonts.emplace_back(font_load);
         }
+        else
+        {   std::printf("Warning: Fail to load font \"%s\"\n", font->name);   }
     }
-    else
-    {   std::printf("Warning: Fail to load font \"%s\"\n", DEFAULT_FONT);   }
+    set_font(FONT_TO_USE, AppState::e_font_type::TEXT);
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so
     // platform windows can look identical to regular ones.
@@ -96,6 +106,27 @@ void MainUI::setup()
         context.style->WindowRounding = 0.0f;
         context.style->Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
+}
+
+void MainUI::set_font(const char* name, const AppState::e_font_type type)
+{
+    bool font_found = false;
+
+    for (const auto& font : state.fonts)
+    {
+        if (strcmp(font.name, FONT_TO_USE) != 0)
+        {   continue;   }
+
+        if (font.type != type)
+        {   continue;   }
+
+        font_found = true;
+
+        ImGui::PushFont(font.imgui);
+    }
+
+    if (!font_found)
+    {   std::printf("Warning: Fail to set font \"%s\"\n", name);   }
 }
 
 void MainUI::draw()
@@ -108,7 +139,7 @@ void MainUI::draw()
     // Get current used Imgui style
     context.style = &(ImGui::GetStyle());
 
-    ImGui::PushFont(state.font_text);
+    set_font(FONT_TO_USE, AppState::e_font_type::TEXT);
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(context.io->DisplaySize);
     ImGui::Begin("Main", nullptr,
@@ -198,7 +229,7 @@ void MainUI::draw_content()
     /***********************/
 
     // Text: Title
-    ImGui::PushFont(state.font_h2);
+    set_font(FONT_TO_USE, AppState::e_font_type::H2);
     ImGui::Text("ImGui C++ Starter");
     ImGui::PopFont();
 
@@ -340,7 +371,7 @@ void MainUI::draw_exit_popup()
     {
         // Text: Exit the App?
         ImGui::Dummy(ImVec2(0, 10));
-        ImGui::PushFont(state.font_h2);
+        set_font(FONT_TO_USE, AppState::e_font_type::H2);
         const char* title = "Quit App?";
         float text_width = ImGui::CalcTextSize(title).x;
         ImGui::SetCursorPosX(

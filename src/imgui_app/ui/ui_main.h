@@ -90,6 +90,13 @@ class MainUI : public IUI
         const float size);
 
     /**
+     * @brief Set the current font to be used.
+     * @param name Font name.
+     * @param type Font type.
+     */
+    void set_font(const char* name, const AppState::e_font_type type);
+
+    /**
      * @brief Draw Main UI Content region.
      */
     void draw_content();
