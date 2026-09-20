@@ -26,15 +26,15 @@
 
 /*****************************************************************************/
 
-/* Fonts Data */
+/* Fonts Configuration */
 
-// Notes:
-// - These font data comes from linked fonts library (at CMake)
-// - You can check the symbol names at custom_fonts.h
+// Note: font names at custom_fonts.h (_fonts array)
+static constexpr const char* DEFAULT_FONT = "NK57_Monospace_No_Bk_otf";
 
-// Custom Monospace Font
-inline const uint8_t* MYFONT = _binary_NK57_Monospace_No_Bk_otf_start;
-inline const size_t MYFONT_SIZE = _binary_NK57_Monospace_No_Bk_otf_size;
+static constexpr float FONT_H1_SIZE = 32.0f;
+static constexpr float FONT_H2_SIZE = 24.0f;
+static constexpr float FONT_H3_SIZE = 18.0f;
+static constexpr float FONT_TEXT_SIZE = 14.0f;
 
 /*****************************************************************************/
 
@@ -72,16 +72,22 @@ void MainUI::setup()
     }
 
     // Load Custom Fonts
-    if (!state.font_h1)
-    {   state.font_h1 = add_font(MYFONT, MYFONT_SIZE, 32.0f);   }
-    if (!state.font_h2)
-    {   state.font_h2 = add_font(MYFONT, MYFONT_SIZE, 24.0f);   }
-    if (!state.font_h3)
-    {   state.font_h3 = add_font(MYFONT, MYFONT_SIZE, 18.0f);   }
-    if(!state.font_text)
+    s_font_data* font = binary_fonts.get(DEFAULT_FONT);
+    if (font)
     {
-        state.font_text = add_font(MYFONT, MYFONT_SIZE, 14.0f);
+        if (!state.font_h1)
+        {   state.font_h1 = add_font(font->data, font->size, FONT_H1_SIZE);   }
+        if (!state.font_h2)
+        {   state.font_h2 = add_font(font->data, font->size, FONT_H2_SIZE);   }
+        if (!state.font_h3)
+        {   state.font_h3 = add_font(font->data, font->size, FONT_H3_SIZE);   }
+        if (!state.font_text)
+        {
+            state.font_text = add_font(font->data, font->size, FONT_TEXT_SIZE);
+        }
     }
+    else
+    {   std::printf("Warning: Fail to load font \"%s\"\n", DEFAULT_FONT);   }
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so
     // platform windows can look identical to regular ones.
