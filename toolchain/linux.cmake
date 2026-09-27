@@ -54,7 +54,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     )
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
     list(APPEND OPTIMIZATION_FLAGS
-        -Os
+        -O2
     )
 endif()
 
