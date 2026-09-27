@@ -31,6 +31,23 @@ apt_install()
     fi
 }
 
+# Python Module install function
+pip_install()
+{
+    if [ $# -gt 0 ]; then
+        echo "-------------------------------------------------"
+        echo " Installing python ${1} module"
+        echo "-------------------------------------------------"
+        python3 -m pip install --break-system-packages $1
+        if [[ $? != 0 ]]; then
+            echo "Error: Can't install python ${1} module."
+            echo ""
+            exit 1
+        fi
+        echo ""
+    fi
+}
+
 ##############################################################################
 
 ### Main Script ###
@@ -54,7 +71,6 @@ apt_install binutils
 apt_install gcc
 apt_install g++
 apt_install gdb
-apt_install mingw-w64
 apt_install doxygen
 
 # MinGW toolchain
@@ -88,6 +104,11 @@ apt_install libdecor-0-dev
 # Runtime libraries for ImGui backends
 apt_install libglfw3
 apt_install libsdl2-2.0-0
+
+# Python
+apt_install python3
+apt_install python3-pip
+pip_install jinja2
 
 echo ""
 echo "Installation completed"
