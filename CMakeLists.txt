@@ -15,15 +15,15 @@ set(PROJECT_NAME imguiapp)
 project(${PROJECT_NAME} LANGUAGES ASM C CXX)
 
 # Project Directory Paths
-set(DIR_ASSETS ${CMAKE_SOURCE_DIR}/deps/assets)
-set(DIR_BIN ${CMAKE_SOURCE_DIR}/bin)
-set(DIR_BUILD ${CMAKE_SOURCE_DIR}/build)
-set(DIR_DOC ${CMAKE_SOURCE_DIR}/doc)
-set(DIR_INC ${CMAKE_SOURCE_DIR}/include)
-set(DIR_SRC ${CMAKE_SOURCE_DIR}/src)
-set(DIR_LIB ${CMAKE_SOURCE_DIR}/lib)
-set(DIR_TOOL ${CMAKE_SOURCE_DIR}/tool)
-set(DIR_CMAKE_TOOLCHAIN ${CMAKE_SOURCE_DIR}/toolchain)
+set(DIR_ASSETS "${CMAKE_SOURCE_DIR}/deps/assets")
+set(DIR_BIN "${CMAKE_SOURCE_DIR}/bin")
+set(DIR_BUILD "${CMAKE_SOURCE_DIR}/build")
+set(DIR_DOC "${CMAKE_SOURCE_DIR}/doc")
+set(DIR_INC "${CMAKE_SOURCE_DIR}/include")
+set(DIR_SRC "${CMAKE_SOURCE_DIR}/src")
+set(DIR_LIB "${CMAKE_SOURCE_DIR}/lib")
+set(DIR_TOOL "${CMAKE_SOURCE_DIR}/tool")
+set(DIR_CMAKE_TOOLCHAIN "${CMAKE_SOURCE_DIR}/toolchain")
 
 ###############################################################################
 
@@ -275,18 +275,27 @@ add_dependencies(${PROJECT_NAME}
 ### Post-Build Targets ###
 
 # Copy executable and assets to debug/ and bin/ directory
+set(DIR_DEBUG "${DIR_BUILD}/debug")
+if(TARGET_PLATFORM STREQUAL "Linux")
+    set(DIR_DEBUG "${DIR_BUILD}/debug/linux")
+elseif(TARGET_PLATFORM STREQUAL "Windows")
+    set(DIR_DEBUG "${DIR_BUILD}/debug/windows")
+elseif(TARGET_PLATFORM STREQUAL "Mingw")
+    set(DIR_DEBUG "${DIR_BUILD}/debug/mingw")
+endif()
 add_custom_command(
     TARGET ${PROJECT_NAME}
     POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${DIR_DEBUG}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${DIR_OUT_BIN}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:${PROJECT_NAME}>"
-        "${DIR_BUILD}/${PROJECT_NAME}"
+        "${DIR_DEBUG}/${PROJECT_NAME}"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:${PROJECT_NAME}>"
         "${DIR_OUT_BIN}/"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${DIR_ASSETS}"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_BUILD}/"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_DEBUG}/"
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${DIR_ASSETS}" "${DIR_OUT_BIN}/"
     COMMENT "Copying output binary and assets to debug/ and bin/ directories"
 )

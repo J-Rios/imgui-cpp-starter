@@ -130,7 +130,7 @@
       "name": "windows-debug-sdl",
       "displayName": "windows-debug-sdl",
       "description": "Native Windows Debug build (Imgui SDL)",
-      "inherits": ["common", "windows", "debug", "imgui-sdl"],
+      "inherits": ["common", "windows", "debug", "imgui-sdl", "static-link"],
       "binaryDir": "${sourceDir}/build/windows-debug/sdl",
       "installDir": "${sourceDir}/bin/windows-debug/sdl"
     },
@@ -138,7 +138,7 @@
       "name": "windows-debug-glfw",
       "displayName": "windows-debug-glfw",
       "description": "Native Windows Debug build (Imgui GLFW)",
-      "inherits": ["common", "windows", "debug", "imgui-glfw"],
+      "inherits": ["common", "windows", "debug", "imgui-glfw", "static-link"],
       "binaryDir": "${sourceDir}/build/windows-debug/glfw",
       "installDir": "${sourceDir}/bin/windows-debug/glfw"
     },

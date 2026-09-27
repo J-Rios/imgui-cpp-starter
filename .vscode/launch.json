@@ -3,32 +3,113 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [
-    {
-        "name": "(gdb) Launch",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/build/imguiapp",
-        //"args": ["--demo"],
-        "args": [""],
-        "stopAtEntry": false,
-        "cwd": "${fileDirname}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands":
-        [
-            {
-                "description": "Enable pretty-printing for gdb",
-                "text": "-enable-pretty-printing",
-                "ignoreFailures": true
-            },
-            {
-                "description": "Set Disassembly Flavor to Intel",
-                "text": "-gdb-set disassembly-flavor intel",
-                "ignoreFailures": true
-            }
-        ]
-    }
+    "configurations":
+    [
+        {
+            "name": "Linux Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "MIMode": "gdb",
+            "stopAtEntry": true,
+            "externalConsole": false,
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/debug/linux/imguiapp",
+            "args": [""],
+            "environment": [],
+            "setupCommands":
+            [
+                {
+                    "description": "Enable GDB pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Debug dissasembly show Intel syntax",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Skip debug step-into std:: functions",
+                    "text": "skip -rfu ^std::",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Skip debug step-into libstdc++ headers",
+                    "text": "skip -gfi /usr/include/c++/*",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Windows Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb.exe",
+            "stopAtEntry": true,
+            "externalConsole": true,
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/debug/windows/imguiapp",
+            "args": [],
+            "environment": [],
+            "setupCommands":
+            [
+                {
+                    "description": "Enable GDB pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Debug dissasembly show Intel syntax",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Skip debug step-into std:: functions",
+                    "text": "skip -rfu ^std::",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Skip debug step-into libstdc++ headers",
+                    "text": "skip -gfi /usr/include/c++/*",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Mingw Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "MIMode": "gdb",
+            "stopAtEntry": true,
+            "externalConsole": false,
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/debug/mingw/imguiapp",
+            "args": [""],
+            "environment": [],
+            "setupCommands":
+            [
+                {
+                    "description": "Enable GDB pretty-printing",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Debug dissasembly show Intel syntax",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Skip debug step-into std:: functions",
+                    "text": "skip -rfu ^std::",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Skip debug step-into libstdc++ headers",
+                    "text": "skip -gfi /usr/include/c++/*",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }

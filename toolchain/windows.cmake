@@ -7,9 +7,8 @@
 
 # Set System and Compiler
 set(CMAKE_SYSTEM_NAME Windows)
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_LINKER lld-link)
+set(CMAKE_C_COMPILER gcc)
+set(CMAKE_CXX_COMPILER g++)
 
 # Clear all default under-the-hood compiler flags applied by CMake
 set(CMAKE_CXX_FLAGS_RELEASE)
@@ -35,7 +34,9 @@ list(APPEND COMMON_FLAGS
     -Wcast-align
     -Wmissing-declarations
     -Wredundant-decls
-    -Wimplicit-fallthrough
+    -Wimplicit-fallthrough=2
+    -fdump-tree-optimized
+    -fstack-usage
 )
 
 # Optimization Flags
@@ -47,12 +48,13 @@ list(APPEND OPTIMIZATION_FLAGS
 )
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     list(APPEND OPTIMIZATION_FLAGS
-        -O0
+        -Og
+        -ggdb
         -g
     )
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
     list(APPEND OPTIMIZATION_FLAGS
-        -Os
+        -O2
     )
 endif()
 
@@ -72,26 +74,47 @@ list(APPEND CXX_FLAGS
     ${OPTIMIZATION_FLAGS}
     -Wconditionally-supported
     -Wno-variadic-macros
+    -g
 )
 
 # Linker Flags
 set(LINK_FLAGS)
 list(APPEND LINK_FLAGS
-    -Wl,/INCLUDE:__chkstk
+    -Wl,--gc-sections
 )
+if(BUILD_STATIC)
+    list(APPEND LINK_FLAGS
+        -static
+        -static-libgcc
+        -static-libstdc++
+    )
+endif()
 if(CMAKE_BUILD_TYPE MATCHES Release)
     list(APPEND LINK_FLAGS
-        -Wl,/OPT:REF
-        -Wl,/OPT:ICF
-        -Wl,/DEBUG:NONE
+    #   -flto
+        -Wl,-strip-all
     )
 endif()
 
-# Set Static/Dynamic Linkage
-if(BUILD_STATIC)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
-else()
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
-endif()
+# Get libgcc DLL
+execute_process(
+    COMMAND ${CMAKE_C_COMPILER} -print-file-name=libgcc_s_seh-1.dll
+    OUTPUT_VARIABLE LIBGCC_DLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get libstdc++ DLL
+execute_process(
+    COMMAND ${CMAKE_C_COMPILER} -print-file-name=libstdc++-6.dll
+    OUTPUT_VARIABLE LIBSTDCPP_DLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get winpthread DLL
+execute_process(
+    COMMAND ${CMAKE_C_COMPILER} -print-file-name=libwinpthread-1.dll
+    OUTPUT_VARIABLE LIBPTHREAD_DLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 ###############################################################################

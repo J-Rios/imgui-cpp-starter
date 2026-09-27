@@ -18,20 +18,24 @@ It provides a complete setup using **CMake** (as build system generator) and **N
 
 ## Requirements
 
+### Linux
+
 The following commands install all required tools on **Ubuntu 24.04**.  
 For other distributions or operating systems, find and install the equivalent packages.
 
-### Option A - Installation script
+**Note:** This Linux setup allows to cross-compile and build for Windows via Mingw, so it can be used to generate both, Linux and Windows binaries.
+
+#### Option A - Installation script
 
 For an easy installation just run the provided script:
 
 ```bash
 cd tool
-chmod +x ubuntu_24_install_requirements
-sudo ./ubuntu_24_install_requirements
+chmod +x ubuntu_24_install_requirements.sh
+sudo ./ubuntu_24_install_requirements.sh
 ```
 
-### Option B - Manual step-by-step installation
+#### Option B - Manual step-by-step installation
 
 1. Update APT repositories
 
@@ -77,6 +81,17 @@ sudo apt install -y libglfw3
 
 # For SDL builds
 sudo apt install -y libsdl2-2.0-0
+```
+
+### Windows
+
+The best way to build this from Native Windows is to setup and use an MSYS2 environment.
+
+For an easy installation just run the provided script:
+
+```bat
+cd tool
+.\windows_11_install_requirements.bat
 ```
 
 ## VSCode Usage
